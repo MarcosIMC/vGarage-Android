@@ -8,10 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
@@ -21,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -30,14 +39,19 @@ import com.mimc_software.vgarageandroid.R
 @Composable
 fun AddGarageScreen(modifier: Modifier, navigationContoller: NavHostController) {
     var garageName by remember { mutableStateOf("") }
-
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+    AppBar(navigationContoller)
+    Column(modifier = modifier.fillMaxSize().padding(60.dp)) {
         TextField(
             value = garageName,
             onValueChange = { garageName = it},
             singleLine = true,
             maxLines = 1,
-            modifier = modifier.align(Alignment.CenterHorizontally)
+            modifier = modifier.align(Alignment.CenterHorizontally),
+            placeholder = { Text("Nombre ...") },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
+            )
         )
         Carousel()
         Spacer(modifier = modifier.weight(1f))
@@ -46,6 +60,24 @@ fun AddGarageScreen(modifier: Modifier, navigationContoller: NavHostController) 
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBar(navigationContoller: NavHostController) {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = colorResource(R.color.appColor),
+            titleContentColor = colorResource(R.color.textWhite),
+        ),
+        title = {
+            Text("Nuevo Garaje")
+        },
+        navigationIcon = {
+            IconButton(onClick = {navigationContoller.navigate("landing")}) {
+                Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "")
+            }
+        }
+    )}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
