@@ -24,10 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 
 @Composable
-fun AddGarageScreen(modifier: Modifier) {
+fun AddGarageScreen(modifier: Modifier, navigationContoller: NavHostController) {
     var garageName by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {

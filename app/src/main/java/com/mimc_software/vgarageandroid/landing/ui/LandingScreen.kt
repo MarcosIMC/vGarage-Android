@@ -19,10 +19,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 
 @Composable
-fun LandingScreen(modifier: Modifier) {
+fun LandingScreen(modifier: Modifier, navigationContoller: NavHostController) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Image(painter = painterResource(R.drawable.ic_android_black_24dp), contentDescription = "app logo", modifier = modifier.align(Alignment.CenterHorizontally).size(80.dp))
@@ -30,7 +31,7 @@ fun LandingScreen(modifier: Modifier) {
             Text(text = "Texto prueba 2", modifier = modifier.align(Alignment.CenterHorizontally), color = colorResource(R.color.textWhite))
             Text(text = "Texto prueba 3", modifier = modifier.align(Alignment.CenterHorizontally), color = colorResource(R.color.textWhite))
             Spacer(modifier = modifier.height(30.dp).weight(1f))
-            Button(onClick = {}, modifier.align(Alignment.CenterHorizontally).testTag("add_garage_btn"), colors = ButtonColors(
+            Button(onClick = {navigationContoller.navigate("addGarage")}, modifier.align(Alignment.CenterHorizontally).testTag("add_garage_btn"), colors = ButtonColors(
                 containerColor = colorResource(R.color.botonInAppColor),
                 contentColor = Color.White,
                 disabledContainerColor = Color.Blue,
