@@ -1,6 +1,7 @@
 package com.mimc_software.vgarageandroid.addGarage.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -47,12 +49,12 @@ fun AddGarageScreen(modifier: Modifier, navigationContoller: NavHostController) 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(60.dp)
+            .padding(20.dp)
     ) {
         Text(
-            modifier = modifier.align(Alignment.CenterHorizontally),
+            modifier = modifier.align(Alignment.CenterHorizontally).weight(0.1f),
             text = "Introduce los datos para crear tu garaje.",
-            fontSize = 25.sp,
+            fontSize = 20.sp,
             color = colorResource(R.color.appColor),
             fontWeight = FontWeight.Bold
         )
@@ -62,15 +64,27 @@ fun AddGarageScreen(modifier: Modifier, navigationContoller: NavHostController) 
             singleLine = true,
             maxLines = 1,
             modifier = modifier.align(Alignment.CenterHorizontally),
-            placeholder = { Text("Nombre ...") },
+            placeholder = { Text("Nombre del garaje ...") },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent
             )
         )
-        Carousel()
-        Spacer(modifier = modifier.weight(1f))
-        AddGarageButton(garageName)
+        Text(
+            modifier = modifier.align(Alignment.CenterHorizontally).weight(0.1f),
+            text = "¿Qué hace vGarage?",
+            fontSize = 20.sp,
+            color = colorResource(R.color.appColor),
+            fontWeight = FontWeight.Bold
+        )
+        Carousel(modifier = modifier.weight(0.3f))
+        Text(
+            modifier = modifier.align(Alignment.CenterHorizontally),
+            text = "Ten un listado de los mantenimientos",
+            color = colorResource(R.color.appColor),
+            fontWeight = FontWeight.Bold
+        )
+        AddGarageButton(garageName, modifier = modifier.weight(0.1f))
     }
 }
 
@@ -99,7 +113,7 @@ fun AppBar(navigationContoller: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Carousel() {
+fun Carousel(modifier: Modifier) {
     val carouselState = rememberCarouselState { 3 }
 
     HorizontalMultiBrowseCarousel(
@@ -123,7 +137,7 @@ fun Carousel() {
 }
 
 @Composable
-fun AddGarageButton(garageName: String) {
+fun AddGarageButton(garageName: String, modifier: Modifier) {
     Button(onClick = {}, modifier = Modifier.fillMaxWidth(), enabled = !garageName.isEmpty(), colors = ButtonColors(
         containerColor = colorResource(R.color.botonInAppColor),
         contentColor = colorResource(R.color.textWhite),
