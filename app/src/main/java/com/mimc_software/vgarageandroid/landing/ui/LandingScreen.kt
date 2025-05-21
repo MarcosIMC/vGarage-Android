@@ -26,7 +26,7 @@ import com.mimc_software.vgarageandroid.R
 fun LandingScreen(modifier: Modifier, navigationContoller: NavHostController) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Image(painter = painterResource(R.drawable.ic_android_black_24dp), contentDescription = "app logo", modifier = modifier.align(Alignment.CenterHorizontally).size(80.dp))
+            Image(painter = painterResource(R.drawable.logoapp), contentDescription = "app logo", modifier = modifier.align(Alignment.CenterHorizontally).size(150.dp))
             Text(text = "Texto prueba 1", modifier = modifier.align(Alignment.CenterHorizontally), color = colorResource(R.color.textWhite))
             Text(text = "Texto prueba 2", modifier = modifier.align(Alignment.CenterHorizontally), color = colorResource(R.color.textWhite))
             Text(text = "Texto prueba 3", modifier = modifier.align(Alignment.CenterHorizontally), color = colorResource(R.color.textWhite))
