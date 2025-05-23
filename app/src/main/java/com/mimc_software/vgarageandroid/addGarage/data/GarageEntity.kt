@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class GarageEntity (
-    @PrimaryKey val uid: Int,
+    @PrimaryKey val uid: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "active") val active: Boolean
 )

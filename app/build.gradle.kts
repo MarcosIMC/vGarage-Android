@@ -69,6 +69,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.7.1")
     testImplementation("androidx.room:room-testing:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")
+    kapt("androidx.room:room-compiler:2.7.1")
 
     //LiveData
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
@@ -79,6 +80,9 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:2.56.2")
     testImplementation ("com.google.dagger:hilt-android-testing:2.56.2")
     kaptTest ("com.google.dagger:hilt-compiler:2.56.2")
+    testImplementation(kotlin("test"))
+    testImplementation("androidx.compose.ui:ui-test-junit4:1.8.2")
+
 }
 
 kapt {
