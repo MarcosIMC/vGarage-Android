@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -62,4 +64,23 @@ dependencies {
 
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.9.0")
+
+    //Room
+    implementation("androidx.room:room-runtime:2.7.1")
+    testImplementation("androidx.room:room-testing:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
+
+    //LiveData
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.0")
+
+    //Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    kapt ("com.google.dagger:hilt-compiler:2.56.2")
+    testImplementation ("com.google.dagger:hilt-android-testing:2.56.2")
+    kaptTest ("com.google.dagger:hilt-compiler:2.56.2")
+}
+
+kapt {
+    correctErrorTypes = true
 }
