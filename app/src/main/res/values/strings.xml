@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">vGarage Android</string>
+    <!-- Landing page text -->
+    <string name="problem_statement_forgot_maintenance">Olvidé el último mantenimiento</string>
+    <string name="problem_statement_forgot_itv">Se me pasó la ITV.</string>
+    <string name="problem_statement_forgot_parking">¿Dónde aparqué?</string>
+    <string name="slogan_app">Despreocúpate de tus vehículos, nosotros nos encargamos.</string>
+    <string name="button_add_garage">Abrir un nuevo garaje</string>
 </resources>
