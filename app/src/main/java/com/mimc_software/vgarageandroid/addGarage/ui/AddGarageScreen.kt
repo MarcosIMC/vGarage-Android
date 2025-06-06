@@ -42,11 +42,11 @@ import com.mimc_software.vgarageandroid.R
 @Composable
 fun AddGarageScreen(
     modifier: Modifier,
-    navigationContoller: NavHostController,
+    navigationController: NavHostController,
     addGarageScreenViewModel: AddGarageScreenViewModel
 ) {
     var garageName by remember { mutableStateOf("") }
-    AppBar(navigationContoller)
+    AppBar(navigationController)
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -98,7 +98,7 @@ fun AddGarageScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(navigationContoller: NavHostController) {
+fun AppBar(navigationController: NavHostController) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = colorResource(R.color.appColor),
@@ -107,7 +107,7 @@ fun AppBar(navigationContoller: NavHostController) {
             Text("Nuevo Garaje")
         }, navigationIcon = {
             IconButton(
-                onClick = { navigationContoller.navigate("landing") }, colors = IconButtonColors(
+                onClick = { navigationController.navigate("landing") }, colors = IconButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = colorResource(R.color.textWhite),
                     disabledContainerColor = Color.Transparent,
