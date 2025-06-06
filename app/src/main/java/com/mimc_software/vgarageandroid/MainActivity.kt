@@ -31,10 +31,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             VGarageAndroidTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val navigationContoller = rememberNavController()
-                    NavHost(navController = navigationContoller, startDestination = Navigation.Landing.route) {
-                        composable(Navigation.Landing.route) { LandingScreen(modifier = Modifier.padding(innerPadding).background(color = colorResource(id = R.color.appColor)), navigationContoller) }
-                        composable(Navigation.AddGarage.route) { AddGarageScreen(modifier = Modifier.padding(innerPadding), navigationContoller, addGarageScreenViewModel) }
+                    val navigationController = rememberNavController()
+                    NavHost(navController = navigationController, startDestination = Navigation.Landing.route) {
+                        composable(Navigation.Landing.route) { LandingScreen(modifier = Modifier.padding(innerPadding).background(color = colorResource(id = R.color.appColor)), navigationController) }
+                        composable(Navigation.AddGarage.route) { AddGarageScreen(modifier = Modifier.padding(innerPadding), navigationController, addGarageScreenViewModel) }
                     }
                 }
             }
