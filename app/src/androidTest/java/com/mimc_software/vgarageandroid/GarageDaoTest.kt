@@ -50,6 +50,6 @@ class GarageDaoTest {
             )
         )
         val result = garageDao.getActiveGarage()
-        assert(result.name == "prueba")
+        assert(result?.name == "prueba")
     }
 }

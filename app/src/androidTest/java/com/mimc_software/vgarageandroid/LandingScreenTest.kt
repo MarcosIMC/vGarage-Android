@@ -1,5 +1,6 @@
 /*package com.mimc_software.vgarageandroid
 
+import androidx.activity.viewModels
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -10,8 +11,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
+import com.mimc_software.vgarageandroid.addGarage.domain.AddGarageUseCase
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
+import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
 import com.mimc_software.vgarageandroid.landing.ui.LandingScreen
+import dagger.hilt.android.testing.HiltAndroidRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,13 +24,16 @@ class LandingScreenTest {
     @get:Rule
     val composeLandingScreen = createComposeRule()
     lateinit var navigationController: TestNavHostController
+    val hiltRule = HiltAndroidRule(this)
 
     @Before
     fun setup() {
+        hiltRule.inject()
         navigationController = TestNavHostController(ApplicationProvider.getApplicationContext())
         navigationController.navigatorProvider.addNavigator(ComposeNavigator())
 
         composeLandingScreen.setContent {
+            val addGarageScreenViewModel: AddGarageScreenViewModel = hiltViewModel()
             // Aquí es donde pasas el controlador al NavHost de tu app
             //LandingScreen(modifier = Modifier, navigationContoller = navigationController)
             NavHost(navController = navigationController, startDestination = "landing") {
