@@ -10,5 +10,5 @@ interface GarageDao {
     suspend fun addGarage(garage: GarageEntity)
 
     @Query("SELECT * from GarageEntity WHERE active == true")
-    fun getActiveGarage(): GarageEntity
+    suspend fun getActiveGarage(): GarageEntity?
 }
