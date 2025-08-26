@@ -64,7 +64,7 @@ dependencies {
     implementation("androidx.navigation:navigation-testing:2.9.0")
     implementation("com.google.dagger:hilt-android-testing:2.56.2")
     kaptAndroidTest("com.google.dagger:hilt-compiler:2.56.2")
-
+    implementation ("androidx.test:core-ktx:1.6.1")
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.9.0")
 

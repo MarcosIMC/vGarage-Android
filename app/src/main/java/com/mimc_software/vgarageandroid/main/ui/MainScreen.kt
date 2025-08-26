@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -41,7 +42,7 @@ fun FabAdd(modifier: Modifier, navigationController: NavHostController) {
         onClick = {
             navigationController.navigate("addVehicle")
         },
-        modifier = modifier.padding(25.dp),
+        modifier = modifier.padding(25.dp).testTag("btn_fab"),
         containerColor = colorResource(R.color.appColor),
         contentColor = colorResource(R.color.textWhite)
     ) {
@@ -67,7 +68,8 @@ fun AppBar(activeGarage: GarageModel?) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings options",
-                    tint = colorResource(R.color.textWhite)
+                    tint = colorResource(R.color.textWhite),
+                    modifier = Modifier.testTag("btn_settings")
                 )
             }
         }
