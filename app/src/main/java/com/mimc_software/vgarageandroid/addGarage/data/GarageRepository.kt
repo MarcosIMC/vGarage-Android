@@ -7,8 +7,8 @@ import javax.inject.Singleton
 @Singleton
 class GarageRepository @Inject constructor(private val garageDao: GarageDao) {
 
-    suspend fun add(garageModel: GarageModel) {
-        garageDao.addGarage(GarageEntity(garageModel.uid, garageModel.name, garageModel.active))
+    suspend fun add(garageModel: GarageModel): Long {
+        return garageDao.addGarage(GarageEntity(garageModel.uid, garageModel.name, garageModel.active))
     }
 
     suspend fun getActiveGarage(): GarageModel? {

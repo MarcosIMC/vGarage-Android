@@ -23,6 +23,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,8 +45,20 @@ import com.mimc_software.vgarageandroid.R
 fun AddGarageScreen(
     modifier: Modifier,
     navigationController: NavHostController,
-    addGarageScreenViewModel: AddGarageScreenViewModel
+    addGarageScreenViewModel: AddGarageScreenViewModel,
+    onNavigateToMain: () -> Unit
 ) {
+    val uiState by addGarageScreenViewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        when(uiState) {
+            is AddGarageUiState.NavigateToMain -> {
+                onNavigateToMain()
+            }
+            else -> Unit
+        }
+    }
+
     var garageName by remember { mutableStateOf("") }
     AppBar(navigationController)
     Column(

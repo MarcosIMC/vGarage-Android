@@ -4,4 +4,5 @@ sealed class Navigation(val route:String) {
     object Landing:Navigation("landing")
     object AddGarage:Navigation("addGarage")
     object Main: Navigation("main")
+    object AddVehicle: Navigation("addVehicle")
 }
