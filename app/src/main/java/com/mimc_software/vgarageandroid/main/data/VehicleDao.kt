@@ -9,7 +9,7 @@ import androidx.room.Transaction
 interface VehicleDao {
     @Transaction
     @Query("SELECT * FROM VehicleEntity WHERE garageId == :garageId")
-    suspend fun getVehiclesFrom(garageId: String): List<VehicleEntity>
+    suspend fun getVehiclesFrom(garageId: String): List<VehicleEntity>?
 
     @Insert
     suspend fun addVehicle(vehicle: VehicleEntity): Long

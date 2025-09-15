@@ -1,17 +1,16 @@
-/*package com.mimc_software.vgarageandroid
+package com.mimc_software.vgarageandroid
 
-import androidx.activity.viewModels
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import com.mimc_software.vgarageandroid.addGarage.domain.AddGarageUseCase
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
 import com.mimc_software.vgarageandroid.landing.ui.LandingScreen
@@ -33,7 +32,7 @@ class LandingScreenTest {
         navigationController.navigatorProvider.addNavigator(ComposeNavigator())
 
         composeLandingScreen.setContent {
-            val addGarageScreenViewModel: AddGarageScreenViewModel = hiltViewModel()
+            val addGarageScreenViewModel: AddGarageScreenViewModel = viewModel()
             // Aquí es donde pasas el controlador al NavHost de tu app
             //LandingScreen(modifier = Modifier, navigationContoller = navigationController)
             NavHost(navController = navigationController, startDestination = "landing") {
@@ -41,7 +40,8 @@ class LandingScreenTest {
                 composable("addGarage") { AddGarageScreen(
                     modifier = Modifier,
                     navigationController,
-                    addGarageScreenViewModel
+                    addGarageScreenViewModel,
+                    onNavigateToMain = { navigationController.navigate(Navigation.Main.route) }
                 ) }
             }
         }
@@ -65,4 +65,4 @@ class LandingScreenTest {
         composeLandingScreen.onNodeWithTag("add_garage_btn").performClick()
         assert(navigationController.currentDestination?.route == "addGarage")
     }
-}*/
+}
