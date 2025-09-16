@@ -1,7 +1,5 @@
 package com.mimc_software.vgarageandroid.addVehicle
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,26 +14,32 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
+import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 
 @Composable
 fun AddVehicle(
@@ -43,8 +47,10 @@ fun AddVehicle(
     navigationController: NavHostController,
     addVehicleViewModel: AddVehicleViewModel
 ) {
+    val state by addVehicleViewModel.uiState.collectAsState()
+
     AppBar(navigationController)
-    Body(modifier, addVehicleViewModel)
+    Body(modifier, addVehicleViewModel, state)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +64,13 @@ fun AppBar(navigationController: NavHostController) {
         title = { Text("Nuevo vehículo") },
         navigationIcon = {
             IconButton(
-                onClick = { navigationController.navigate("main") }
+                onClick = { navigationController.navigate("main") },
+                colors = IconButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colorResource(R.color.textWhite),
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = colorResource(R.color.textWhite)
+                )
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -70,7 +82,7 @@ fun AppBar(navigationController: NavHostController) {
 }
 
 @Composable
-fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel) {
+fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: AddVehicleUiState) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -119,5 +131,24 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel) {
                 }
             }
         }
+
+        HorizontalDivider(Modifier, DividerDefaults.Thickness, colorResource(R.color.appColor))
+
+        AddVehicleForm(modifier, addVehicleViewModel, state)
     }
+}
+
+@Composable
+fun AddVehicleForm(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: AddVehicleUiState) {
+    Text("Datos del vehículo")
+
+    OutlinedTextField(
+        value = state.vehicleName,
+        onValueChange = { addVehicleViewModel._onVehicleNameChange(it) },
+        label = { Text("Marca del vehículo") },
+        leadingIcon = { Icon(imageVector = ImageVector.vectorResource(R.drawable.directions_car_24px), contentDescription = "Car icon")},
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        colors = CustomOutlinedTextField.outlinedTextFieldForm(),
+    )
 }
