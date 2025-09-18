@@ -1,10 +1,13 @@
 package com.mimc_software.vgarageandroid.addVehicle
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +20,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
+import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 
 @Composable
 fun AddVehicle(
@@ -106,10 +112,20 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier,
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 ElevatedButton(
                     onClick = { /* TODO: Implement vehicle addition logic */ },
-                    Modifier.fillMaxWidth(0.6f)
+                    Modifier.fillMaxWidth(0.6f),
+                    colors = ButtonColors(
+                        containerColor = colorResource(R.color.white),
+                        contentColor = colorResource(R.color.appColor),
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Transparent
+                    )
                 ) {
                     Text("Añadir foto")
                 }
@@ -138,17 +154,95 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddVehicleForm(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: AddVehicleUiState) {
-    Text("Datos del vehículo")
+fun AddVehicleForm(
+    modifier: Modifier,
+    addVehicleViewModel: AddVehicleViewModel,
+    state: AddVehicleUiState
+) {
+    val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
         value = state.vehicleName,
         onValueChange = { addVehicleViewModel._onVehicleNameChange(it) },
-        label = { Text("Marca del vehículo") },
-        leadingIcon = { Icon(imageVector = ImageVector.vectorResource(R.drawable.directions_car_24px), contentDescription = "Car icon")},
+        label = { Text("Marca") },
+        leadingIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.directions_car_24px),
+                contentDescription = "Car icon"
+            )
+        },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        colors = CustomOutlinedTextField.outlinedTextFieldForm(),
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
     )
+
+    OutlinedTextField(
+        value = state.vehicleBrand,
+        onValueChange = { addVehicleViewModel._onVehicleBrandChange(it) },
+        label = { Text("Modelo") },
+        leadingIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.car_tag_24px),
+                contentDescription = "Car icon"
+            )
+        },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+    )
+
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        DatePickerFieldToModal(
+            modifier = Modifier.weight(1f),
+            value = state.vehicleYear,
+            onValueChange = { addVehicleViewModel._onVehicleYearChange(it) },
+            label = "Año"
+        )
+
+        DatePickerFieldToModal(
+            modifier = Modifier.weight(1f),
+            value = state.vehicleRevision,
+            onValueChange = { addVehicleViewModel._onVehicleRevisionChange(it) },
+            label = "ITV"
+        )
+    }
+
+    OutlinedTextField(
+        value = state.vehicleOthers,
+        onValueChange = { addVehicleViewModel._onVehicleOthersChange(it) },
+        label = { Text("Notas") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f),
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+    )
+
+    FilledTonalButton(
+        onClick = {},
+        modifier.fillMaxWidth(),
+        colors = ButtonColors(
+            containerColor = colorResource(R.color.appColor),
+            contentColor = colorResource(R.color.white),
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent
+        )
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.save_24px),
+                contentDescription = "Añadir vehículo"
+            )
+            Text("Añadir vehículo")
+        }
+    }
 }

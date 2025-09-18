@@ -1,17 +1,17 @@
 package com.mimc_software.vgarageandroid.addVehicle
 
 import androidx.lifecycle.ViewModel
+import com.google.android.libraries.places.api.model.LocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Date
 import javax.inject.Inject
 
 data class AddVehicleUiState (
     val vehicleName: String = "",
     val vehicleBrand: String = "",
-    val vehicleYear: Date = Date(),
-    val vehicleRevision: Date = Date(),
+    val vehicleYear: Long? = null,
+    val vehicleRevision: Long? = null,
     val vehicleImage: String = "",
     val vehicleOthers: String = "",
     val garageId: String = "",
@@ -28,10 +28,11 @@ class AddVehicleViewModel @Inject constructor(): ViewModel() {
     fun _onVehicleBrandChange(newValue: String) {
         _uiState.value = _uiState.value.copy(vehicleBrand = newValue)
     }
-    fun _onVehicleYearChange(newValue: Date) {
+    fun _onVehicleYearChange(newValue: Long?) {
+        print("Hora: $newValue ")
         _uiState.value = _uiState.value.copy(vehicleYear = newValue)
     }
-    fun _onVehicleRevisionChange(newValue: Date) {
+    fun _onVehicleRevisionChange(newValue: Long?) {
         _uiState.value = _uiState.value.copy(vehicleRevision = newValue)
     }
     fun _onVehicleImageChange(newValue: String) {
