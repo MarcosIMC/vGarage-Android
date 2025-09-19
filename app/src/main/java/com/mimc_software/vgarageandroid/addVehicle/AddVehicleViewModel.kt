@@ -1,14 +1,19 @@
 package com.mimc_software.vgarageandroid.addVehicle
 
+import android.net.Uri
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.places.api.model.LocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AddVehicleUiState(
@@ -21,10 +26,17 @@ data class AddVehicleUiState(
     val garageId: String = "",
 )
 
+sealed class AddVehicleUiEvent {
+    object OpenCamera: AddVehicleUiEvent()
+}
+
 @HiltViewModel
 class AddVehicleViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(AddVehicleUiState())
     val uiState: StateFlow<AddVehicleUiState> = _uiState
+
+    private val _uiEvent = MutableSharedFlow<AddVehicleUiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     val vehicleNameHasError: Boolean
         get() = _uiState.value.vehicleName.isEmpty() || "[0-9]".toRegex()
@@ -57,5 +69,15 @@ class AddVehicleViewModel @Inject constructor() : ViewModel() {
 
     fun _onGarageIdChange(newValue: String) {
         _uiState.value = _uiState.value.copy(garageId = newValue)
+    }
+
+    fun onCameraOpen() {
+        viewModelScope.launch {
+            _uiEvent.emit(AddVehicleUiEvent.OpenCamera)
+        }
+    }
+
+    fun onPhotoCaptured(uri: Uri) {
+        _onVehicleImageChange(uri.toString())
     }
 }

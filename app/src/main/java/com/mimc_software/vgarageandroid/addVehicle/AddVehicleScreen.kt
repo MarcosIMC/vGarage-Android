@@ -1,8 +1,19 @@
 package com.mimc_software.vgarageandroid.addVehicle
 
+import android.content.ContentValues
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedButton
@@ -29,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,10 +53,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
@@ -97,20 +115,10 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
             .padding(20.dp)
     ) {
         Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            IconButton(
-                onClick = {},
-                modifier = modifier
-                    .size(100.dp)
-                    .border(3.dp, colorResource(R.color.appColor), CircleShape)
-                    .clip(CircleShape)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.add_photo_alternate_24px),
-                    contentDescription = "Añadir foto de la galería",
-                    tint = colorResource(R.color.appColor),
-                    modifier = Modifier.size(60.dp)
-                )
-            }
+            LoadImageVehicle(
+                imageUriString = state.vehicleImage,
+                modifier = modifier.size(120.dp),
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -132,27 +140,68 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
                     Text("Añadir foto")
                 }
 
-                FilledTonalButton(
-                    onClick = {},
-                    Modifier.fillMaxWidth(0.6f),
-                    colors = ButtonColors(
-                        containerColor = colorResource(R.color.appColor),
-                        contentColor = colorResource(R.color.white),
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Transparent
-                    )
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.photo_camera_24px),
-                        contentDescription = "Abrir cámara"
-                    )
-                }
+                CameraButton(addVehicleViewModel)
             }
         }
 
         HorizontalDivider(Modifier, DividerDefaults.Thickness, colorResource(R.color.appColor))
 
         AddVehicleForm(modifier, addVehicleViewModel, state)
+    }
+}
+
+@Composable
+fun LoadImageVehicle(
+    imageUriString: String?,
+    modifier: Modifier = Modifier,
+    size: Dp = 100.dp,
+    borderColor: Color = colorResource(R.color.appColor),
+    borderWidth: Dp = 3.dp
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+            .clickable {  },
+        contentAlignment = Alignment.Center
+    ) {
+        if (!imageUriString.isNullOrEmpty()) {
+            val context = LocalContext.current
+            val bitmap = remember(imageUriString) {
+                // Convertimos la URI String a Uri
+                val uri = Uri.parse(imageUriString)
+                // Decodificamos a Bitmap desde ContentResolver
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream)
+                }
+            }
+
+            if (bitmap != null) {
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = "Foto del vehículo",
+                    modifier = modifier.size(size),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                // fallback si no se pudo decodificar
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.add_photo_alternate_24px),
+                    contentDescription = "Cámara",
+                    modifier = Modifier.size(size),
+                    tint = colorResource(R.color.appColor)
+                )
+            }
+        } else {
+            // fallback si no hay imagen
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.add_photo_alternate_24px),
+                contentDescription = "Cámara",
+                modifier = Modifier.size(size),
+                tint = colorResource(R.color.appColor)
+            )
+        }
     }
 }
 
@@ -261,4 +310,91 @@ fun AddVehicleForm(
             Text("Añadir vehículo")
         }
     }
+}
+
+@Composable
+fun CameraButton(addVehicleViewModel: AddVehicleViewModel) {
+    val context = LocalContext.current
+
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            addVehicleViewModel.onCameraOpen()
+        } else {
+            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview()
+    ) { bitmap ->
+        bitmap?.let {
+            addVehicleViewModel.onPhotoCaptured(saveBitmapToGallery(context, it))
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        addVehicleViewModel.uiEvent.collect { event ->
+            when (event) {
+                is AddVehicleUiEvent.OpenCamera -> {
+                    cameraLauncher.launch(null)
+                }
+            }
+        }
+    }
+
+    FilledTonalButton(
+        onClick = {
+            when {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.CAMERA
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
+                    addVehicleViewModel.onCameraOpen()
+                }
+
+                else -> {
+                    permissionsLauncher.launch(android.Manifest.permission.CAMERA)
+                }
+            }
+        },
+        Modifier.fillMaxWidth(0.6f),
+        colors = ButtonColors(
+            containerColor = colorResource(R.color.appColor),
+            contentColor = colorResource(R.color.white),
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent
+        )
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.photo_camera_24px),
+            contentDescription = "Abrir cámara"
+        )
+    }
+}
+
+fun saveBitmapToGallery(
+    context: Context,
+    bitmap: Bitmap
+): Uri {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "vehicle_${System.currentTimeMillis()}.jpg")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/vGarage")
+        put(MediaStore.Images.Media.IS_PENDING, 1)
+    }
+    val resolver = context.contentResolver
+    val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+    val imageUri = resolver.insert(collection, contentValues)
+
+    if (imageUri != null) {
+        resolver.openOutputStream(imageUri)?.use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        }
+        contentValues.clear()
+        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+        resolver.update(imageUri, contentValues, null, null)
+    }
+    return imageUri!!
 }

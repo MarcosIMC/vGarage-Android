@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material3)
     implementation(libs.places)
+    implementation(libs.androidx.compose.ui.unit)
     //implementation(libs.androidx.navigation.testing.android)
 
     //Test
