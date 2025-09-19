@@ -2,7 +2,6 @@ package com.mimc_software.vgarageandroid.addVehicle
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,10 +31,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
@@ -161,8 +163,7 @@ fun AddVehicleForm(
     addVehicleViewModel: AddVehicleViewModel,
     state: AddVehicleUiState
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-
+    var vehicleNameFieldIsTouched by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
         value = state.vehicleName,
         onValueChange = { addVehicleViewModel._onVehicleNameChange(it) },
@@ -173,9 +174,24 @@ fun AddVehicleForm(
                 contentDescription = "Car icon"
             )
         },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    vehicleNameFieldIsTouched = true
+                }
+            },
         singleLine = true,
         colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+        isError = addVehicleViewModel.vehicleNameHasError && vehicleNameFieldIsTouched,
+        supportingText = {
+            if (addVehicleViewModel.vehicleNameHasError && vehicleNameFieldIsTouched) {
+                Text(
+                    text = "El nombre del vehículo no puede estar vacío",
+                    color = Color.Red
+                )
+            }
+        }
     )
 
     OutlinedTextField(
