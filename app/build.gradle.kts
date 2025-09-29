@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.places)
     implementation(libs.androidx.compose.ui.unit)
+    implementation("androidx.activity:activity-ktx:1.7.2")
     //implementation(libs.androidx.navigation.testing.android)
 
     //Test

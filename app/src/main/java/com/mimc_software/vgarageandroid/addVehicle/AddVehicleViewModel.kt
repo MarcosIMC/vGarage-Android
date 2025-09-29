@@ -21,7 +21,7 @@ data class AddVehicleUiState(
     val vehicleBrand: String = "",
     val vehicleYear: Long? = null,
     val vehicleRevision: Long? = null,
-    val vehicleImage: String = "",
+    val vehicleImage: String? = null,
     val vehicleOthers: String = "",
     val garageId: String = "",
 )
@@ -59,7 +59,7 @@ class AddVehicleViewModel @Inject constructor() : ViewModel() {
         _uiState.value = _uiState.value.copy(vehicleRevision = newValue)
     }
 
-    fun _onVehicleImageChange(newValue: String) {
+    fun _onVehicleImageChange(newValue: String?) {
         _uiState.value = _uiState.value.copy(vehicleImage = newValue)
     }
 

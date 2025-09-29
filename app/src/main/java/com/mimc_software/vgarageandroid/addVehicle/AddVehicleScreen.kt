@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedButton
@@ -66,6 +65,8 @@ import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
+import androidx.core.net.toUri
+import com.mimc_software.vgarageandroid.ui.theme.customComponents.galleryLauncher
 
 @Composable
 fun AddVehicle(
@@ -109,6 +110,12 @@ fun AppBar(navigationController: NavHostController) {
 
 @Composable
 fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: AddVehicleUiState) {
+    val galleryLauncher = galleryLauncher { uri ->
+        if (uri != null) {
+            addVehicleViewModel._onVehicleImageChange(uri.toString())
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -118,6 +125,7 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
             LoadImageVehicle(
                 imageUriString = state.vehicleImage,
                 modifier = modifier.size(120.dp),
+                addVehicleViewModel
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -128,7 +136,13 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ElevatedButton(
-                    onClick = { /* TODO: Implement vehicle addition logic */ },
+                    onClick = {
+                        if (state.vehicleImage == null) {
+                            galleryLauncher.launch("image/*")
+                        } else {
+                            addVehicleViewModel._onVehicleImageChange(null)
+                        }
+                    },
                     Modifier.fillMaxWidth(0.6f),
                     colors = ButtonColors(
                         containerColor = colorResource(R.color.white),
@@ -137,7 +151,7 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
                         disabledContentColor = Color.Transparent
                     )
                 ) {
-                    Text("Añadir foto")
+                    Text(if (state.vehicleImage == null) "Añadir foto" else "Eliminar foto")
                 }
 
                 CameraButton(addVehicleViewModel)
@@ -154,23 +168,33 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
 fun LoadImageVehicle(
     imageUriString: String?,
     modifier: Modifier = Modifier,
+    addVehicleViewModel: AddVehicleViewModel,
     size: Dp = 100.dp,
     borderColor: Color = colorResource(R.color.appColor),
     borderWidth: Dp = 3.dp
 ) {
+
+    val galleryLauncher = galleryLauncher { uri ->
+        if (uri != null) {
+            addVehicleViewModel._onVehicleImageChange(uri.toString())
+        }
+    }
+
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
             .border(borderWidth, borderColor, CircleShape)
-            .clickable {  },
+            .clickable {
+                galleryLauncher.launch("image/*")
+            },
         contentAlignment = Alignment.Center
     ) {
         if (!imageUriString.isNullOrEmpty()) {
             val context = LocalContext.current
             val bitmap = remember(imageUriString) {
                 // Convertimos la URI String a Uri
-                val uri = Uri.parse(imageUriString)
+                val uri = imageUriString.toUri()
                 // Decodificamos a Bitmap desde ContentResolver
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
                     BitmapFactory.decodeStream(inputStream)
@@ -181,7 +205,7 @@ fun LoadImageVehicle(
                 Image(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = "Foto del vehículo",
-                    modifier = modifier.size(size),
+                    modifier = Modifier.size(size),
                     contentScale = ContentScale.Crop
                 )
             } else {
