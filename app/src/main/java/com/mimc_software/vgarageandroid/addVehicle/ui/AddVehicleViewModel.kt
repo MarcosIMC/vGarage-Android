@@ -93,6 +93,10 @@ class AddVehicleViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(garageId = newValue)
     }
 
+    fun validateForm(): Boolean {
+        return !vehicleNameHasError && !vehicleModelHasError
+    }
+
     fun onCameraOpen() {
         viewModelScope.launch {
             _uiCameraEvent.emit(AddVehicleUiCameraEvent.OpenCamera)

@@ -366,6 +366,7 @@ fun AddVehicleForm(
             addVehicleViewModel.onAddVehicle(newVehicle)
         },
         modifier.fillMaxWidth(),
+        enabled = addVehicleViewModel.validateForm(),
         colors = ButtonColors(
             containerColor = colorResource(R.color.appColor),
             contentColor = colorResource(R.color.white),
