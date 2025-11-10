@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mimc_software.vgarageandroid.addGarage.data.GarageDao
 import com.mimc_software.vgarageandroid.addGarage.data.GarageEntity
-import com.mimc_software.vgarageandroid.main.data.VehicleDao
-import com.mimc_software.vgarageandroid.main.data.VehicleEntity
+import com.mimc_software.vgarageandroid.addVehicle.data.VehicleDao
+import com.mimc_software.vgarageandroid.addVehicle.data.VehicleEntity
 
 @Database(
     entities = [GarageEntity::class, VehicleEntity::class],

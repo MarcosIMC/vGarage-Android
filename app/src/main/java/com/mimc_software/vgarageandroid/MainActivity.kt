@@ -19,8 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
-import com.mimc_software.vgarageandroid.addVehicle.AddVehicle
-import com.mimc_software.vgarageandroid.addVehicle.AddVehicleViewModel
+import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicle
+import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicleViewModel
 import com.mimc_software.vgarageandroid.landing.ui.LandingScreen
 import com.mimc_software.vgarageandroid.main.ui.MainScreen
 import com.mimc_software.vgarageandroid.main.ui.MainScreenViewModel
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToMain = { navigationController.navigate(Navigation.Main.route) }
                             ) }
                             composable(Navigation.Main.route) { MainScreen(Modifier.padding(innerPadding), navigationController, mainScreenViewModel, mainActivityViewModel.activeGarage) }
-                            composable(Navigation.AddVehicle.route) { AddVehicle(Modifier.padding(innerPadding), navigationController, addVehicleViewModel) }
+                            composable(Navigation.AddVehicle.route) { AddVehicle(Modifier.padding(innerPadding), navigationController, addVehicleViewModel, onNavigateToMain = { navigationController.navigate(Navigation.Main.route) {popUpTo(Navigation.AddVehicle.route) { inclusive = true }} } ) }
                         }
                     }
                 }

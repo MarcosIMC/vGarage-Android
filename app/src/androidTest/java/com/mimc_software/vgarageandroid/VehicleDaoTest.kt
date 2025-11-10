@@ -1,7 +1,7 @@
 package com.mimc_software.vgarageandroid
 
 import com.mimc_software.vgarageandroid.database.AppDatabase
-import com.mimc_software.vgarageandroid.main.data.VehicleDao
+import com.mimc_software.vgarageandroid.addVehicle.data.VehicleDao
 
 class VehicleDaoTest {
     private lateinit var dv: AppDatabase

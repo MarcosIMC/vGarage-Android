@@ -3,7 +3,7 @@ package com.mimc_software.vgarageandroid.database
 import android.content.Context
 import androidx.room.Room
 import com.mimc_software.vgarageandroid.addGarage.data.GarageDao
-import com.mimc_software.vgarageandroid.main.data.VehicleDao
+import com.mimc_software.vgarageandroid.addVehicle.data.VehicleDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

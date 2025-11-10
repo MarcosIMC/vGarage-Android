@@ -1,6 +1,6 @@
 package com.mimc_software.vgarageandroid.main.domain
 
-import com.mimc_software.vgarageandroid.main.data.VehicleRepository
+import com.mimc_software.vgarageandroid.addVehicle.data.VehicleRepository
 import javax.inject.Inject
 
 class GetVehiclesByGarageUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.mimc_software.vgarageandroid.main.data
+package com.mimc_software.vgarageandroid.addVehicle.data
 
 import androidx.room.Dao
 import androidx.room.Insert

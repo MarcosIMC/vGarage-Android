@@ -1,4 +1,4 @@
-package com.mimc_software.vgarageandroid.main.data
+package com.mimc_software.vgarageandroid.addVehicle.data
 
 import javax.inject.Inject
 import javax.inject.Singleton

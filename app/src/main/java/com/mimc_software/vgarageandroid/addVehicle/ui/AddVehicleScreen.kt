@@ -1,7 +1,9 @@
-package com.mimc_software.vgarageandroid.addVehicle
+package com.mimc_software.vgarageandroid.addVehicle.ui
 
+import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -66,18 +68,22 @@ import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 import androidx.core.net.toUri
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.galleryLauncher
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 fun AddVehicle(
     modifier: Modifier,
     navigationController: NavHostController,
-    addVehicleViewModel: AddVehicleViewModel
+    addVehicleViewModel: AddVehicleViewModel,
+    onNavigateToMain: () -> Unit
 ) {
     val state by addVehicleViewModel.uiState.collectAsState()
 
     AppBar(navigationController)
-    Body(modifier, addVehicleViewModel, state)
+    Body(modifier, addVehicleViewModel, state, onNavigateToMain)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,7 +115,12 @@ fun AppBar(navigationController: NavHostController) {
 }
 
 @Composable
-fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: AddVehicleUiState) {
+fun Body(
+    modifier: Modifier,
+    addVehicleViewModel: AddVehicleViewModel,
+    state: AddVehicleDataUiState,
+    onNavigateToMain: () -> Unit
+) {
     val galleryLauncher = galleryLauncher { uri ->
         if (uri != null) {
             addVehicleViewModel._onVehicleImageChange(uri.toString())
@@ -160,7 +171,7 @@ fun Body(modifier: Modifier, addVehicleViewModel: AddVehicleViewModel, state: Ad
 
         HorizontalDivider(Modifier, DividerDefaults.Thickness, colorResource(R.color.appColor))
 
-        AddVehicleForm(modifier, addVehicleViewModel, state)
+        AddVehicleForm(modifier, addVehicleViewModel, state, onNavigateToMain)
     }
 }
 
@@ -229,14 +240,27 @@ fun LoadImageVehicle(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun AddVehicleForm(
     modifier: Modifier,
     addVehicleViewModel: AddVehicleViewModel,
-    state: AddVehicleUiState
+    state: AddVehicleDataUiState,
+    onNavigateToMain: () -> Unit
 ) {
+    val uiEvent by addVehicleViewModel.uiEvent.collectAsState(initial = null)
+
+    LaunchedEffect(uiEvent) {
+        when(uiEvent) {
+            is AddVehicleUiEvent.NavigationToMain -> {
+                onNavigateToMain()
+            }
+            else -> {}
+        }
+    }
+
     var vehicleNameFieldIsTouched by rememberSaveable { mutableStateOf(false) }
+    var vehicleModelFieldIsTouched by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
         value = state.vehicleName,
         onValueChange = { addVehicleViewModel._onVehicleNameChange(it) },
@@ -277,9 +301,23 @@ fun AddVehicleForm(
                 contentDescription = "Car icon"
             )
         },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    vehicleModelFieldIsTouched = true
+                }
+            },
         singleLine = true,
         colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+        isError = addVehicleViewModel.vehicleModelHasError && vehicleModelFieldIsTouched,
+        supportingText = {
+            if (addVehicleViewModel.vehicleModelHasError && vehicleModelFieldIsTouched) {
+                Text(
+                    text = "El modelo del vehículo no puede estar vacío",
+                    color = Color.Red
+                )
+            }
+        }
     )
 
     Row(
@@ -314,7 +352,19 @@ fun AddVehicleForm(
     )
 
     FilledTonalButton(
-        onClick = {},
+        onClick = {
+            val newVehicle = VehicleModel(
+                uid = Uuid.random().toString(),
+                brand = state.vehicleName,
+                model = state.vehicleBrand,
+                year = state.vehicleYear.toString(),
+                revision = state.vehicleRevision?.toString() ?: "",
+                image = state.vehicleImage ?: "",
+                others = state.vehicleOthers,
+                displayName = "${state.vehicleName} ${state.vehicleBrand}"
+            )
+            addVehicleViewModel.onAddVehicle(newVehicle)
+        },
         modifier.fillMaxWidth(),
         colors = ButtonColors(
             containerColor = colorResource(R.color.appColor),
@@ -359,9 +409,9 @@ fun CameraButton(addVehicleViewModel: AddVehicleViewModel) {
     }
 
     LaunchedEffect(Unit) {
-        addVehicleViewModel.uiEvent.collect { event ->
+        addVehicleViewModel.uiCameraEvent.collect { event ->
             when (event) {
-                is AddVehicleUiEvent.OpenCamera -> {
+                is AddVehicleUiCameraEvent.OpenCamera -> {
                     cameraLauncher.launch(null)
                 }
             }
@@ -373,13 +423,13 @@ fun CameraButton(addVehicleViewModel: AddVehicleViewModel) {
             when {
                 ContextCompat.checkSelfPermission(
                     context,
-                    android.Manifest.permission.CAMERA
-                ) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED -> {
                     addVehicleViewModel.onCameraOpen()
                 }
 
                 else -> {
-                    permissionsLauncher.launch(android.Manifest.permission.CAMERA)
+                    permissionsLauncher.launch(Manifest.permission.CAMERA)
                 }
             }
         },

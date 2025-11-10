@@ -2,10 +2,10 @@ package com.mimc_software.vgarageandroid.main.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimc_software.vgarageandroid.main.data.toUiModel
+import com.mimc_software.vgarageandroid.addVehicle.data.toUiModel
 import com.mimc_software.vgarageandroid.main.domain.GetVehiclesByGarageUseCase
 import com.mimc_software.vgarageandroid.main.domain.GetVehiclesResult
-import com.mimc_software.vgarageandroid.main.ui.model.VehicleModel
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
