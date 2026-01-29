@@ -55,6 +55,9 @@ dependencies {
     implementation(libs.places)
     implementation(libs.androidx.compose.ui.unit)
     implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+
     //implementation(libs.androidx.navigation.testing.android)
 
     //Test

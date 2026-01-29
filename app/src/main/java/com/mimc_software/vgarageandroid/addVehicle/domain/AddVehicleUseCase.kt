@@ -12,7 +12,6 @@ class AddVehicleUseCase @Inject constructor(
     suspend operator fun invoke(vehicleModel: VehicleModel): AddVehicleResult {
         return try {
             val newVehicleId = vehicleRepository.add(vehicleModel.toEntity())
-            print("Valor del id: $newVehicleId")
             AddVehicleResult.Success(newVehicleId)
         } catch (e: SQLiteConstraintException) {
             AddVehicleResult.Duplicate

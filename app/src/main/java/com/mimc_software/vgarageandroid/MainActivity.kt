@@ -48,16 +48,47 @@ class MainActivity : ComponentActivity() {
                         }
                     } else {
                         val navigationController = rememberNavController()
-                        NavHost(navController = navigationController, startDestination = launchDestination) {
-                            composable(Navigation.Landing.route) { LandingScreen(modifier = Modifier.padding(innerPadding).background(color = colorResource(id = R.color.appColor)), navigationController) }
-                            composable(Navigation.AddGarage.route) { AddGarageScreen(
-                                modifier = Modifier.padding(innerPadding),
-                                navigationController,
-                                addGarageScreenViewModel,
-                                onNavigateToMain = { navigationController.navigate(Navigation.Main.route) }
-                            ) }
-                            composable(Navigation.Main.route) { MainScreen(Modifier.padding(innerPadding), navigationController, mainScreenViewModel, mainActivityViewModel.activeGarage) }
-                            composable(Navigation.AddVehicle.route) { AddVehicle(Modifier.padding(innerPadding), navigationController, addVehicleViewModel, onNavigateToMain = { navigationController.navigate(Navigation.Main.route) {popUpTo(Navigation.AddVehicle.route) { inclusive = true }} } ) }
+                        NavHost(
+                            navController = navigationController,
+                            startDestination = launchDestination
+                        ) {
+                            composable(Navigation.Landing.route) {
+                                LandingScreen(
+                                    modifier = Modifier
+                                        .padding(
+                                            innerPadding
+                                        )
+                                        .background(color = colorResource(id = R.color.appColor)),
+                                    navigationController
+                                )
+                            }
+                            composable(Navigation.AddGarage.route) {
+                                AddGarageScreen(
+                                    modifier = Modifier.padding(innerPadding),
+                                    navigationController,
+                                    addGarageScreenViewModel,
+                                    onNavigateToMain = { navigationController.navigate(Navigation.Main.route) }
+                                )
+                            }
+                            composable(Navigation.Main.route) {
+                                MainScreen(
+                                    Modifier.padding(
+                                        innerPadding
+                                    ),
+                                    navigationController,
+                                    mainScreenViewModel,
+                                    mainActivityViewModel.activeGarage
+                                )
+                            }
+                            composable(Navigation.AddVehicle.route) {
+                                AddVehicle(
+                                    Modifier.padding(
+                                        innerPadding
+                                    ),
+                                    navigationController,
+                                    addVehicleViewModel
+                                )
+                            }
                         }
                     }
                 }

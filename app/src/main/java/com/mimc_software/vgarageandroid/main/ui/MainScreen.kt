@@ -17,6 +17,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -40,11 +43,20 @@ fun MainScreen(
     mainScreenViewModel: MainScreenViewModel,
     activeGarage: GarageModel?
 ) {
-    val uiState by mainScreenViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
+    val uiState by mainScreenViewModel.uiState.collectAsState()
     LaunchedEffect(activeGarage?.uid) {
         activeGarage?.let {
             mainScreenViewModel.onGetVehicles(it.uid)
+        }
+    }
+
+    val feedbackMessage by mainScreenViewModel.feedbackMessage.collectAsState()
+    LaunchedEffect(feedbackMessage) {
+        feedbackMessage?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            mainScreenViewModel.clearFeedbackMessage()
         }
     }
     AppBar(activeGarage)

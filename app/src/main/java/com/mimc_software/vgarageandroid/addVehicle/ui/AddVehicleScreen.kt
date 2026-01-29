@@ -68,6 +68,8 @@ import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 import androidx.core.net.toUri
+import androidx.navigation.compose.rememberNavController
+import com.mimc_software.vgarageandroid.Navigation
 import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.galleryLauncher
 import kotlin.uuid.ExperimentalUuidApi
@@ -77,13 +79,12 @@ import kotlin.uuid.Uuid
 fun AddVehicle(
     modifier: Modifier,
     navigationController: NavHostController,
-    addVehicleViewModel: AddVehicleViewModel,
-    onNavigateToMain: () -> Unit
+    addVehicleViewModel: AddVehicleViewModel
 ) {
     val state by addVehicleViewModel.uiState.collectAsState()
 
     AppBar(navigationController)
-    Body(modifier, addVehicleViewModel, state, onNavigateToMain)
+    Body(modifier, addVehicleViewModel, state, navigationController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +120,7 @@ fun Body(
     modifier: Modifier,
     addVehicleViewModel: AddVehicleViewModel,
     state: AddVehicleDataUiState,
-    onNavigateToMain: () -> Unit
+    navigationController: NavHostController
 ) {
     val galleryLauncher = galleryLauncher { uri ->
         if (uri != null) {
@@ -171,7 +172,7 @@ fun Body(
 
         HorizontalDivider(Modifier, DividerDefaults.Thickness, colorResource(R.color.appColor))
 
-        AddVehicleForm(modifier, addVehicleViewModel, state, onNavigateToMain)
+        AddVehicleForm(modifier, addVehicleViewModel, state, navigationController)
     }
 }
 
@@ -246,16 +247,24 @@ fun AddVehicleForm(
     modifier: Modifier,
     addVehicleViewModel: AddVehicleViewModel,
     state: AddVehicleDataUiState,
-    onNavigateToMain: () -> Unit
+    navigationController: NavHostController
 ) {
     val uiEvent by addVehicleViewModel.uiEvent.collectAsState(initial = null)
 
     LaunchedEffect(uiEvent) {
         when(uiEvent) {
             is AddVehicleUiEvent.NavigationToMain -> {
-                onNavigateToMain()
+                navigationController.navigate(Navigation.Main.route) {
+                    popUpTo(Navigation.Main.route) {
+                        inclusive = true
+                    }
+                }
+
+                navigationController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("feedbackMessage", "El vehículo se añadió correctamente.")
             }
-            else -> {}
+            else -> Unit
         }
     }
 

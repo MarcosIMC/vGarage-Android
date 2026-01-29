@@ -1,6 +1,7 @@
 package com.mimc_software.vgarageandroid.addVehicle.ui
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimc_software.vgarageandroid.addVehicle.domain.AddVehicleResult
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -116,7 +116,7 @@ class AddVehicleViewModel @Inject constructor(
                 is AddVehicleResult.Success -> {
                     _uiState.value = AddVehicleDataUiState()
                     _uiStateFlow.value = AddVehicleUiState.Idle
-                    _uiEvent.send(AddVehicleUiEvent.ShowSnackbar("Vehículo agregado correctamente."))
+                    _uiEvent.send(AddVehicleUiEvent.ShowSnackbar("El vehículo se añadió correctamente."))
                     _uiEvent.send(AddVehicleUiEvent.NavigationToMain)
                 }
                 is AddVehicleResult.Duplicate -> {

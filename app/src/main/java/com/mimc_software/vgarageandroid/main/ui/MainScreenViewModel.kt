@@ -1,5 +1,6 @@
 package com.mimc_software.vgarageandroid.main.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimc_software.vgarageandroid.addVehicle.data.toUiModel
@@ -22,10 +23,17 @@ sealed class GetVehiclesUiState {
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getVehiclesByGarageUseCase: GetVehiclesByGarageUseCase
+    private val getVehiclesByGarageUseCase: GetVehiclesByGarageUseCase,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _uiState = MutableStateFlow<GetVehiclesUiState>(GetVehiclesUiState.Idle)
     val uiState: StateFlow<GetVehiclesUiState> = _uiState
+
+    val feedbackMessage: StateFlow<String?> = savedStateHandle.getStateFlow(
+        "feedbackMessage",
+        null
+    )
+
     @OptIn(ExperimentalStdlibApi::class)
     fun onGetVehicles(garageId: String) {
         viewModelScope.launch {
@@ -44,5 +52,9 @@ class MainScreenViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun clearFeedbackMessage() {
+        savedStateHandle["feedbackMessage"] = null
     }
 }
