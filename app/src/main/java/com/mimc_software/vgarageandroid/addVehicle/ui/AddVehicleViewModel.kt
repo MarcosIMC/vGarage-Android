@@ -1,6 +1,7 @@
 package com.mimc_software.vgarageandroid.addVehicle.ui
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -90,6 +91,7 @@ class AddVehicleViewModel @Inject constructor(
     }
 
     fun _onGarageIdChange(newValue: String) {
+        Log.d("AddVehicleViewModel", "Setting garageId: $newValue")
         _uiState.value = _uiState.value.copy(garageId = newValue)
     }
 
@@ -111,18 +113,22 @@ class AddVehicleViewModel @Inject constructor(
     fun onAddVehicle(newVehicle: VehicleModel) {
         viewModelScope.launch {
             _uiStateFlow.value = AddVehicleUiState.Loading
+            Log.d("AddVehicleViewModel", "Adding vehicle: brand=${newVehicle.brand}, model=${newVehicle.model}, garageId=${newVehicle.garageId}")
 
             when (val result = addVehicleUseCase(newVehicle)) {
                 is AddVehicleResult.Success -> {
+                    Log.d("AddVehicleViewModel", "Vehicle added successfully")
                     _uiState.value = AddVehicleDataUiState()
                     _uiStateFlow.value = AddVehicleUiState.Idle
                     _uiEvent.send(AddVehicleUiEvent.ShowSnackbar("El vehículo se añadió correctamente."))
                     _uiEvent.send(AddVehicleUiEvent.NavigationToMain)
                 }
                 is AddVehicleResult.Duplicate -> {
+                    Log.d("AddVehicleViewModel", "Vehicle is duplicate")
                     _uiStateFlow.value = AddVehicleUiState.Error("El vehículo ya existe.")
                 }
                 is AddVehicleResult.Error -> {
+                    Log.e("AddVehicleViewModel", "Error adding vehicle: ${result.exception}")
                     _uiStateFlow.value = AddVehicleUiState.Error("Error: ${result.exception}")
                 }
             }

@@ -2,7 +2,6 @@ package com.mimc_software.vgarageandroid.main.ui
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,8 +47,10 @@ fun MainScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val uiState by mainScreenViewModel.uiState.collectAsState()
-    LaunchedEffect(activeGarage?.uid) {
+
+    LaunchedEffect(activeGarage?.uid, navigationController.currentBackStackEntry) {
         activeGarage?.let {
+            Log.d("MainScreen","Garage ID: ${it.uid}")
             mainScreenViewModel.onGetVehicles(it.uid)
         }
     }
@@ -59,44 +62,63 @@ fun MainScreen(
             mainScreenViewModel.clearFeedbackMessage()
         }
     }
-    AppBar(activeGarage)
-    Body(modifier = modifier.fillMaxSize(), uiState)
-    Box(modifier = modifier.fillMaxSize()) {
-        FabAdd(Modifier.align(Alignment.BottomEnd), navigationController)
+
+    Scaffold(
+        topBar = { AppBar(activeGarage) },
+        floatingActionButton = { FabAdd(navigationController, activeGarage?.uid) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Body(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            uiState = uiState
+        )
     }
 }
 @Composable
-fun FabAdd(modifier: Modifier, navigationController: NavHostController) {
+fun FabAdd(navigationController: NavHostController, garageId: String?) {
     FloatingActionButton(
         onClick = {
-            navigationController.navigate("addVehicle")
+            garageId?.let {
+                navigationController.navigate("addVehicle/$it")
+            }
         },
-        modifier = modifier.padding(25.dp).testTag("btn_fab"),
         containerColor = colorResource(R.color.appColor),
         contentColor = colorResource(R.color.textWhite)
     ) {
-        Icon(Icons.Filled.Add, contentDescription = "")
+        Icon(Icons.Filled.Add, contentDescription = "Añadir vehículo")
     }
 }
 
 @Composable
 fun Body(modifier: Modifier, uiState: GetVehiclesUiState) {
-    print("Antes del when")
     when(uiState) {
         is GetVehiclesUiState.Idle -> {
 
         }
         is GetVehiclesUiState.Loading -> {
-            CircularProgressIndicator()
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = modifier
+            ) {
+                CircularProgressIndicator()
+            }
         }
         is GetVehiclesUiState.Empty -> {
-            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxSize()) {
+            Log.d("MainScreen","Dentro del error empty")
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = modifier
+            ) {
                 Text("No hay vehículos, añade uno para que aparezca aquí")
             }
         }
         is GetVehiclesUiState.Loaded -> {
             Log.d("MainScreen","Dentro del loaded")
-            LazyColumn {
+            LazyColumn(modifier = modifier) {
                 items(uiState.vehicles) { vehicle ->
                     Row(
                         modifier = Modifier

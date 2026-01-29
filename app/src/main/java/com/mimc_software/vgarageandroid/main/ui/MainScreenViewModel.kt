@@ -1,5 +1,6 @@
 package com.mimc_software.vgarageandroid.main.ui
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,6 +47,7 @@ class MainScreenViewModel @Inject constructor(
                     } else {
                         GetVehiclesUiState.Loaded(result.vehicles.map { it.toUiModel() })
                     }
+                    Log.d("MainScreenViewModel","Vehicles loaded: $_uiState")
                 }
                 else -> {
                     _uiState.value = GetVehiclesUiState.Error("Error: No se pudieron obtener los vehículos.")

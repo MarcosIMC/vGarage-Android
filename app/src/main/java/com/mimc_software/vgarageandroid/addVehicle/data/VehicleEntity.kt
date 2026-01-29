@@ -27,6 +27,7 @@ fun VehicleEntity.toUiModel(): VehicleModel {
         revision = this.revision.toString(),
         image = this.image.toString(),
         others = this.others.toString(),
-        displayName = "${this.brand} ${this.model}"
+        displayName = "${this.brand} ${this.model}",
+        garageId = this.garageId
     )
 }

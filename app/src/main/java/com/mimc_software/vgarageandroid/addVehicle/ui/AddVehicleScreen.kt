@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -79,9 +80,15 @@ import kotlin.uuid.Uuid
 fun AddVehicle(
     modifier: Modifier,
     navigationController: NavHostController,
-    addVehicleViewModel: AddVehicleViewModel
+    addVehicleViewModel: AddVehicleViewModel,
+    garageId: String
 ) {
     val state by addVehicleViewModel.uiState.collectAsState()
+
+    // Set garageId when composable is launched
+    LaunchedEffect(garageId) {
+        addVehicleViewModel._onGarageIdChange(garageId)
+    }
 
     AppBar(navigationController)
     Body(modifier, addVehicleViewModel, state, navigationController)
@@ -362,6 +369,7 @@ fun AddVehicleForm(
 
     FilledTonalButton(
         onClick = {
+            Log.d("AddVehicleScreen", "Creating vehicle with garageId: ${state.garageId}")
             val newVehicle = VehicleModel(
                 uid = Uuid.random().toString(),
                 brand = state.vehicleName,
@@ -370,8 +378,10 @@ fun AddVehicleForm(
                 revision = state.vehicleRevision?.toString() ?: "",
                 image = state.vehicleImage ?: "",
                 others = state.vehicleOthers,
-                displayName = "${state.vehicleName} ${state.vehicleBrand}"
+                displayName = "${state.vehicleName} ${state.vehicleBrand}",
+                garageId = state.garageId
             )
+            Log.d("AddVehicleScreen", "Vehicle created with garageId: ${newVehicle.garageId}")
             addVehicleViewModel.onAddVehicle(newVehicle)
         },
         modifier.fillMaxWidth(),

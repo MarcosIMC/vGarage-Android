@@ -17,6 +17,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
 import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicle
@@ -80,13 +82,18 @@ class MainActivity : ComponentActivity() {
                                     mainActivityViewModel.activeGarage
                                 )
                             }
-                            composable(Navigation.AddVehicle.route) {
+                            composable(
+                                Navigation.AddVehicle.route,
+                                arguments = listOf(navArgument("garageId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                val garageId = backStackEntry.arguments?.getString("garageId") ?: ""
                                 AddVehicle(
                                     Modifier.padding(
                                         innerPadding
                                     ),
                                     navigationController,
-                                    addVehicleViewModel
+                                    addVehicleViewModel,
+                                    garageId
                                 )
                             }
                         }

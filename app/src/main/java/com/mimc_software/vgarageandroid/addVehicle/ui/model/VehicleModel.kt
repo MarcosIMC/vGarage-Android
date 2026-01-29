@@ -10,7 +10,8 @@ data class VehicleModel (
     val revision: String,
     val image: String,
     val others: String,
-    val displayName: String
+    val displayName: String,
+    val garageId: String = ""
 )
 
 fun VehicleModel.toEntity() = VehicleEntity(
@@ -21,5 +22,5 @@ fun VehicleModel.toEntity() = VehicleEntity(
     revision = null,
     image = this.image,
     others = this.others,
-    garageId = ""
+    garageId = this.garageId
 )
