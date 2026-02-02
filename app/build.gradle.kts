@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     implementation(libs.androidx.runner)
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     //implementation(libs.androidx.navigation.testing.android)
 
