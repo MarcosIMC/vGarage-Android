@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.mimc_software.vgarageandroid.HiltTestRunner"
     }
 
     buildTypes {
@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.7.2")
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation(libs.androidx.runner)
 
     //implementation(libs.androidx.navigation.testing.android)
 
@@ -68,10 +69,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.navigation:navigation-testing:2.9.0")
-    implementation("com.google.dagger:hilt-android-testing:2.56.2")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.9.0")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.56.2")
     kaptAndroidTest("com.google.dagger:hilt-compiler:2.56.2")
-    implementation ("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.9.0")
 
