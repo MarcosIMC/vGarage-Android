@@ -1,11 +1,13 @@
 package com.mimc_software.vgarageandroid.main.ui
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimc_software.vgarageandroid.main.data.toUiModel
+import com.mimc_software.vgarageandroid.addVehicle.data.toUiModel
 import com.mimc_software.vgarageandroid.main.domain.GetVehiclesByGarageUseCase
 import com.mimc_software.vgarageandroid.main.domain.GetVehiclesResult
-import com.mimc_software.vgarageandroid.main.ui.model.VehicleModel
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,10 +24,17 @@ sealed class GetVehiclesUiState {
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getVehiclesByGarageUseCase: GetVehiclesByGarageUseCase
+    private val getVehiclesByGarageUseCase: GetVehiclesByGarageUseCase,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _uiState = MutableStateFlow<GetVehiclesUiState>(GetVehiclesUiState.Idle)
     val uiState: StateFlow<GetVehiclesUiState> = _uiState
+
+    val feedbackMessage: StateFlow<String?> = savedStateHandle.getStateFlow(
+        "feedbackMessage",
+        null
+    )
+
     @OptIn(ExperimentalStdlibApi::class)
     fun onGetVehicles(garageId: String) {
         viewModelScope.launch {
@@ -38,11 +47,16 @@ class MainScreenViewModel @Inject constructor(
                     } else {
                         GetVehiclesUiState.Loaded(result.vehicles.map { it.toUiModel() })
                     }
+                    Log.d("MainScreenViewModel","Vehicles loaded: $_uiState")
                 }
                 else -> {
                     _uiState.value = GetVehiclesUiState.Error("Error: No se pudieron obtener los vehículos.")
                 }
             }
         }
+    }
+
+    fun clearFeedbackMessage() {
+        savedStateHandle["feedbackMessage"] = null
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,7 +24,7 @@ import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
 
 @Composable
-fun LandingScreen(modifier: Modifier, navigationContoller: NavHostController) {
+fun LandingScreen(modifier: Modifier, navigationController: NavHostController) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier
             .fillMaxSize()
@@ -61,7 +60,7 @@ fun LandingScreen(modifier: Modifier, navigationContoller: NavHostController) {
                 .height(30.dp)
                 .weight(1f))
             Button(
-                onClick = { navigationContoller.navigate("addGarage") },
+                onClick = { navigationController.navigate("addGarage") },
                 modifier
                     .align(Alignment.CenterHorizontally)
                     .testTag("add_garage_btn"),

@@ -1,9 +1,9 @@
-package com.mimc_software.vgarageandroid.main.data
+package com.mimc_software.vgarageandroid.addVehicle.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.mimc_software.vgarageandroid.main.ui.model.VehicleModel
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import java.util.Date
 
 @Entity
@@ -27,6 +27,7 @@ fun VehicleEntity.toUiModel(): VehicleModel {
         revision = this.revision.toString(),
         image = this.image.toString(),
         others = this.others.toString(),
-        displayName = "${this.brand} ${this.model}"
+        displayName = "${this.brand} ${this.model}",
+        garageId = this.garageId
     )
 }
