@@ -1,7 +1,6 @@
 package com.mimc_software.vgarageandroid.main.ui
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,11 +43,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.mimc_software.vgarageandroid.Navigation
 import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.addGarage.ui.model.GarageModel
 import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
@@ -89,7 +87,8 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            uiState = uiState
+            uiState = uiState,
+            navigationController = navigationController
         )
     }
 }
@@ -109,7 +108,7 @@ fun FabAdd(navigationController: NavHostController, garageId: String?) {
 }
 
 @Composable
-fun Body(modifier: Modifier, uiState: GetVehiclesUiState) {
+fun Body(modifier: Modifier, uiState: GetVehiclesUiState, navigationController: NavHostController) {
     when(uiState) {
         is GetVehiclesUiState.Idle -> {
 
@@ -139,7 +138,9 @@ fun Body(modifier: Modifier, uiState: GetVehiclesUiState) {
                 items(uiState.vehicles) { vehicle ->
                     VehicleItem(
                         vehicle = vehicle,
-                        onClick = { }
+                        onClick = {
+                            navigationController.navigate(Navigation.VehicleDetails.createRoute(vehicle.uid))
+                        }
                     )
                 }
             }

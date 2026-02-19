@@ -7,4 +7,7 @@ sealed class Navigation(val route:String) {
     object AddVehicle: Navigation("addVehicle/{garageId}") {
         fun createRoute(garageId: String) = "addVehicle/$garageId"
     }
+    object VehicleDetails: Navigation("vehicleDetails/{vehicleId}") {
+        fun createRoute(vehicleId: String) = "vehicleDetails/$vehicleId"
+    }
 }
