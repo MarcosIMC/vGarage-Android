@@ -1,19 +1,31 @@
 package com.mimc_software.vgarageandroid.vehicleDetails.ui
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -32,11 +44,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.mimc_software.vgarageandroid.R
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
+import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
 
 @Composable
 fun VehicleDetailsScreen(
@@ -49,6 +68,7 @@ fun VehicleDetailsScreen(
 
     LaunchedEffect(vehicleId) {
         vehicleDetailsScreenViewModel.onGetVehicleDetails(vehicleId)
+        vehicleDetailsScreenViewModel.onGetVehicleMaintenances(vehicleId)
     }
 
     Scaffold(
@@ -165,7 +185,9 @@ fun Body(
             NavigationTab(
                 modifier = modifier,
                 selectedTab = selectedTab,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
+                vehicle = uiState.vehicleDetails,
+                uiState = uiState
             )
         }
         is VehicleDetailsUiState.Empty -> {
@@ -188,13 +210,15 @@ fun Body(
 fun NavigationTab(
     modifier: Modifier,
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    vehicle: VehicleModel,
+    uiState: VehicleDetailsUiState.Loaded
 ) {
     val tabs = listOf("Mantenimiento", "Estacionamiento")
     val icons = listOf(Icons.Filled.Build, Icons.Filled.Place)
 
     Column(modifier = modifier.fillMaxSize()) {
-        TabRow(selectedTabIndex = selectedTab) {
+        TabRow(selectedTabIndex = selectedTab, contentColor = colorResource(R.color.appColor)) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,
@@ -214,9 +238,93 @@ fun NavigationTab(
             contentAlignment = Alignment.Center
         ) {
             when (selectedTab) {
-                0 -> Text("Contenido de Mantenimiento")
+                0 -> VehicleMaintenance(
+                    vehicle = vehicle,
+                    uiState = uiState.vehicleMaintenanceState
+                )
                 1 -> Text("Contenido de Estacionamiento")
             }
+        }
+    }
+}
+
+@Composable
+fun VehicleMaintenance(vehicle: VehicleModel, uiState: VehicleMaintenanceUiState) {
+    when (uiState) {
+        is VehicleMaintenanceUiState.Idle -> {
+
+        }
+        is VehicleMaintenanceUiState.Loading -> {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is VehicleMaintenanceUiState.Loaded -> {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(Modifier.fillMaxWidth().height(100.dp)) {
+                    if (vehicle.image.isNotBlank()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(vehicle.image)
+                                .crossfade(true)
+                                .build(),
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Vehicle Image",
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(60.dp))
+                    }
+
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Año: ${vehicle.year}")
+                        Text("ITV: ${vehicle.revision}")
+
+                        IconButton(onClick = { /* Acción para mostrar notas */ }) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "Notas",
+                                tint = colorResource(R.color.appColor)
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                HorizontalDivider()
+                Spacer(Modifier.height(8.dp))
+
+                LazyColumn() {
+                    items(uiState.maintenances) { maintenance ->
+                        MaintenanceItem(maintenance)
+                    }
+                }
+            }
+        }
+        is VehicleMaintenanceUiState.Empty -> {
+
+        }
+    }
+}
+
+@Composable
+fun MaintenanceItem(maintenance: MaintenanceModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(72.dp)
+            .padding(20.dp)
+            .clickable { /* Acción para mostrar detalles del mantenimiento */ },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(maintenance.title)
+            Text(maintenance.date)
         }
     }
 }
