@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.mimc_software.vgarageandroid.Navigation
 import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
@@ -139,7 +140,7 @@ fun FabAdd(
     FloatingActionButton(
         onClick = {
             when (selectedTab) {
-                0 -> navigationController.navigate("addMaintenance/$vehicleId")
+                0 -> navigationController.navigate(Navigation.AddMaintenance.createRoute(vehicleId))
                 1 -> navigationController.navigate("addParking/$vehicleId")
             }
         },

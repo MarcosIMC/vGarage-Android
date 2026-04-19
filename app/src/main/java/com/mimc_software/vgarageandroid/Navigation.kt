@@ -10,4 +10,7 @@ sealed class Navigation(val route:String) {
     object VehicleDetails: Navigation("vehicleDetails/{vehicleId}") {
         fun createRoute(vehicleId: String) = "vehicleDetails/$vehicleId"
     }
+    object AddMaintenance: Navigation("addMaintenance/{vehicleId}") {
+        fun createRoute(vehicleId: String) = "addMaintenance/$vehicleId"
+    }
 }

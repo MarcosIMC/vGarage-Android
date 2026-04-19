@@ -21,6 +21,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
+import com.mimc_software.vgarageandroid.addMaintenance.ui.AddMaintenanceScreen
+import com.mimc_software.vgarageandroid.addMaintenance.ui.AddMaintenanceViewModel
 import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicle
 import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicleViewModel
 import com.mimc_software.vgarageandroid.landing.ui.LandingScreen
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
     private val mainScreenViewModel: MainScreenViewModel by viewModels()
     private val addVehicleViewModel: AddVehicleViewModel by viewModels()
     private val vehicleDetailsScreenViewModel: VehicleDetailsScreenViewModel by viewModels()
+    private val addMaintenanceViewModel: AddMaintenanceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +110,21 @@ class MainActivity : ComponentActivity() {
                                 VehicleDetailsScreen(
                                     navigationController,
                                     vehicleDetailsScreenViewModel,
+                                    vehicleId
+                                )
+                            }
+                            composable(
+                                Navigation.AddMaintenance.route,
+                                arguments = listOf(navArgument("vehicleId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                val vehicleId =
+                                    backStackEntry.arguments?.getString("vehicleId") ?: ""
+                                AddMaintenanceScreen(
+                                    Modifier.padding(
+                                        innerPadding
+                                    ),
+                                    navigationController,
+                                    addMaintenanceViewModel = addMaintenanceViewModel,
                                     vehicleId
                                 )
                             }
