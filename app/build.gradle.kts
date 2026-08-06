@@ -59,6 +59,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     implementation(libs.androidx.runner)
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation(libs.material3)
+    implementation("androidx.compose.material:material-icons-extended")
 
     //implementation(libs.androidx.navigation.testing.android)
 

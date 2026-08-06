@@ -1,24 +1,40 @@
 package com.mimc_software.vgarageandroid.addMaintenance.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
+import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
+import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 
 @Composable
 fun AddMaintenanceScreen(
@@ -27,8 +43,10 @@ fun AddMaintenanceScreen(
     addMaintenanceViewModel: AddMaintenanceViewModel,
     vehicleId: String
 ) {
+    val state by addMaintenanceViewModel.uiState.collectAsState()
+
     AppBar(navigationController, vehicleId)
-    Body(modifier, addMaintenanceViewModel, navigationController)
+    Body(modifier, addMaintenanceViewModel, state, navigationController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,10 +78,94 @@ fun AppBar(navigationController: NavHostController, vehicleId: String) {
 }
 
 @Composable
-fun Body(modifier: Modifier, addMaintenanceViewModel: AddMaintenanceViewModel, navHostController: NavHostController) {
+fun Body(
+    modifier: Modifier, addMaintenanceViewModel: AddMaintenanceViewModel, state: AddMaintenanceDataUiState,
+    navHostController: NavHostController
+) {
     Column(
-        modifier = modifier.fillMaxSize().padding(20.dp)
+        modifier = modifier.fillMaxSize().padding(80.dp)
     ) {
-
+        AddMaintenanceForm(
+            modifier,
+            addMaintenanceViewModel = addMaintenanceViewModel,
+            state,
+            navigationController = navHostController
+        )
     }
+}
+
+@Composable
+fun AddMaintenanceForm(
+    modifier: Modifier,
+    addMaintenanceViewModel: AddMaintenanceViewModel,
+    state: AddMaintenanceDataUiState,
+    navigationController: NavHostController
+) {
+    var maintenanceTitleFieldIsTouched by remember { mutableStateOf(false) }
+    var selectedMaintenance by rememberSaveable { mutableStateOf(MaintenanceType.OTHERS) }
+
+    OutlinedTextField(
+        value = state.maintenanceTitle,
+        onValueChange = { addMaintenanceViewModel.onMaintenanceTitleChange(it) },
+        label = { Text("Título del mantenimiento") },
+        leadingIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.build_24px),
+                contentDescription = "Icono de mantenimiento"
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    maintenanceTitleFieldIsTouched = true
+                }
+            },
+        singleLine = true,
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+        isError = addMaintenanceViewModel.maintenanceTitleHasError && maintenanceTitleFieldIsTouched,
+        supportingText = {
+            if (addMaintenanceViewModel.maintenanceTitleHasError && maintenanceTitleFieldIsTouched) {
+                Text("El título del mantenimiento no puede estar vacío", color = Color.Red)
+            }
+        }
+    )
+
+    HorizontalDivider(Modifier, DividerDefaults.Thickness, colorResource(R.color.appColor))
+    Text("Datos del mantenimiento", color = colorResource(R.color.appColor), modifier = Modifier.padding(8.dp))
+    DropDownMaintenanceMenu(
+        selectedMaintenance = selectedMaintenance,
+        onMaintenanceSelected = { selectedMaintenance = it },
+        modifier = modifier
+    )
+    DatePickerFieldToModal(
+        modifier = modifier,
+        value = state.maintenanceDate,
+        onValueChange = { addMaintenanceViewModel.onMaintenanceDateChange(it) },
+        label = "Fecha"
+    )
+    OutlinedTextField(
+        value = state.maintenancePrice?.toString() ?: "",
+        onValueChange = { addMaintenanceViewModel.onMaintenancePriceChange(it.toLongOrNull()) },
+        label = { Text("Precio") },
+        modifier = Modifier.fillMaxWidth(),
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+        trailingIcon = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.euro_24),
+                contentDescription = "Icono de precio",
+                tint = colorResource(R.color.appColor)
+            )
+        }
+    )
+    OutlinedTextField(
+        value = state.maintenanceNotes,
+        onValueChange = { addMaintenanceViewModel.onMaintenanceNotesChange(it) },
+        label = { Text("Notas") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f),
+        colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+    )
+
 }
