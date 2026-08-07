@@ -1,14 +1,19 @@
 package com.mimc_software.vgarageandroid.addMaintenance.ui
 
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -33,8 +39,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
+import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
+import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 fun AddMaintenanceScreen(
@@ -94,6 +104,7 @@ fun Body(
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun AddMaintenanceForm(
     modifier: Modifier,
@@ -167,5 +178,41 @@ fun AddMaintenanceForm(
             .fillMaxHeight(0.6f),
         colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
     )
+
+    FilledTonalButton(
+        onClick = {
+            Log.d("AddMaintenance", "Creating maintenance for vehicleId: ${state.vehicleId}")
+            val newMaintenance = MaintenanceModel(
+                uid = Uuid.random().toString(),
+                title = state.maintenanceTitle,
+                kindMaintenance = selectedMaintenance.name,
+                date = state.maintenanceDate?.toString() ?: "",
+                price = state.maintenancePrice?.toDouble() ?: 0.0,
+                description = state.maintenanceNotes,
+                vehicleId = state.vehicleId
+            )
+            Log.d("AddMaintenance", "Maintenance created with maintenanceId: ${newMaintenance.uid}")
+            addMaintenanceViewModel.onAddMaintenance(newMaintenance)
+        },
+        modifier.fillMaxWidth(),
+        enabled = addMaintenanceViewModel.validateForm(),
+        colors = ButtonColors(
+            containerColor = colorResource(R.color.appColor),
+            contentColor = colorResource(R.color.white),
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent
+        )
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.save_24px),
+                contentDescription = "Añadir mantenimiento"
+            )
+            Text("Añadir mantenimiento")
+        }
+    }
 
 }

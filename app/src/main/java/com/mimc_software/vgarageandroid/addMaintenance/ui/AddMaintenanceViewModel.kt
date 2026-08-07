@@ -1,16 +1,21 @@
 package com.mimc_software.vgarageandroid.addMaintenance.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mimc_software.vgarageandroid.addMaintenance.domain.AddMaintenanceResult
+import com.mimc_software.vgarageandroid.addMaintenance.domain.AddMaintenanceUseCase
+import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class AddMaintenanceUiState {
     object Idle: AddMaintenanceUiState()
     object Loading: AddMaintenanceUiState()
     object Success: AddMaintenanceUiState()
-    data class Error(val message: String): AddMaintenanceUiState()
+    data class Error(val exception: Throwable): AddMaintenanceUiState()
 }
 
 data class AddMaintenanceDataUiState(
@@ -24,7 +29,7 @@ data class AddMaintenanceDataUiState(
 
 @HiltViewModel
 class AddMaintenanceViewModel @Inject constructor(
-
+    private val addMaintenanceUseCase: AddMaintenanceUseCase
 ): ViewModel() {
     private val _uiStateFlow = MutableStateFlow<AddMaintenanceUiState>(AddMaintenanceUiState.Idle)
     val uiStateFlow: StateFlow<AddMaintenanceUiState> = _uiStateFlow
@@ -49,6 +54,25 @@ class AddMaintenanceViewModel @Inject constructor(
 
     fun onMaintenanceNotesChange(newValue: String) {
         _uiState.value = _uiState.value.copy(maintenanceNotes = newValue)
+    }
+
+    fun onAddMaintenance(newMaintenance: MaintenanceModel) {
+        viewModelScope.launch {
+            _uiStateFlow.value = AddMaintenanceUiState.Loading
+            when (val result = addMaintenanceUseCase(newMaintenance)) {
+                is AddMaintenanceResult.Success -> {
+                    _uiStateFlow.value = AddMaintenanceUiState.Success
+                }
+
+                is AddMaintenanceResult.Duplicate -> {
+                    _uiStateFlow.value = AddMaintenanceUiState.Error(Exception("El mantenimiento ya existe"))
+                }
+
+                is AddMaintenanceResult.Error -> {
+                    _uiStateFlow.value = AddMaintenanceUiState.Error(result.exception)
+                }
+            }
+        }
     }
 
     fun validateForm(): Boolean {
