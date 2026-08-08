@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,9 +55,16 @@ fun AddMaintenanceScreen(
     vehicleId: String
 ) {
     val state by addMaintenanceViewModel.uiState.collectAsState()
+    val operationState by addMaintenanceViewModel.uiStateFlow.collectAsState()
+
+    LaunchedEffect(operationState) {
+        if (operationState is AddMaintenanceUiState.Success) {
+            navigationController.popBackStack()
+        }
+    }
 
     AppBar(navigationController, vehicleId)
-    Body(modifier, addMaintenanceViewModel, state, navigationController)
+    Body(modifier, addMaintenanceViewModel, state, navigationController, vehicleId)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +98,7 @@ fun AppBar(navigationController: NavHostController, vehicleId: String) {
 @Composable
 fun Body(
     modifier: Modifier, addMaintenanceViewModel: AddMaintenanceViewModel, state: AddMaintenanceDataUiState,
-    navHostController: NavHostController
+    navHostController: NavHostController, vehicleId: String
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(80.dp)
@@ -99,7 +107,8 @@ fun Body(
             modifier,
             addMaintenanceViewModel = addMaintenanceViewModel,
             state,
-            navigationController = navHostController
+            navigationController = navHostController,
+            vehicleId
         )
     }
 }
@@ -110,7 +119,8 @@ fun AddMaintenanceForm(
     modifier: Modifier,
     addMaintenanceViewModel: AddMaintenanceViewModel,
     state: AddMaintenanceDataUiState,
-    navigationController: NavHostController
+    navigationController: NavHostController,
+    vehicleId: String
 ) {
     var maintenanceTitleFieldIsTouched by remember { mutableStateOf(false) }
     var selectedMaintenance by rememberSaveable { mutableStateOf(MaintenanceType.OTHERS) }
@@ -189,7 +199,7 @@ fun AddMaintenanceForm(
                 date = state.maintenanceDate?.toString() ?: "",
                 price = state.maintenancePrice?.toDouble() ?: 0.0,
                 description = state.maintenanceNotes,
-                vehicleId = state.vehicleId
+                vehicleId = vehicleId
             )
             Log.d("AddMaintenance", "Maintenance created with maintenanceId: ${newMaintenance.uid}")
             addMaintenanceViewModel.onAddMaintenance(newMaintenance)

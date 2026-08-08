@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,8 +49,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -65,11 +69,26 @@ fun VehicleDetailsScreen(
     vehicleId: String
 ) {
     val uiState by vehicleDetailsScreenViewModel.uiState.collectAsState()
+    val uiStateMaintenance by vehicleDetailsScreenViewModel.uiStateMaintenance.collectAsState()
     var selectedTab by rememberSaveable { mutableStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(vehicleId) {
         vehicleDetailsScreenViewModel.onGetVehicleDetails(vehicleId)
         vehicleDetailsScreenViewModel.onGetVehicleMaintenances(vehicleId)
+    }
+
+    DisposableEffect(lifecycleOwner, vehicleId) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                vehicleDetailsScreenViewModel.onGetVehicleMaintenances(vehicleId)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     Scaffold(
@@ -95,6 +114,7 @@ fun VehicleDetailsScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             uiState = uiState,
+            uiStateMaintenance = uiStateMaintenance,
             selectedTab = selectedTab,
             onTabSelected = { selectedTab = it }
         )
@@ -166,6 +186,7 @@ fun FabAdd(
 fun Body(
     modifier: Modifier,
     uiState: VehicleDetailsUiState,
+    uiStateMaintenance: VehicleMaintenanceUiState,
     selectedTab: Int,
     onTabSelected: (Int) -> Unit
 ) {
@@ -188,7 +209,8 @@ fun Body(
                 selectedTab = selectedTab,
                 onTabSelected = onTabSelected,
                 vehicle = uiState.vehicleDetails,
-                uiState = uiState
+                uiState = uiState,
+                uiStateMaintenance = uiStateMaintenance
             )
         }
         is VehicleDetailsUiState.Empty -> {
@@ -213,7 +235,8 @@ fun NavigationTab(
     selectedTab: Int,
     onTabSelected: (Int) -> Unit,
     vehicle: VehicleModel,
-    uiState: VehicleDetailsUiState.Loaded
+    uiState: VehicleDetailsUiState.Loaded,
+    uiStateMaintenance: VehicleMaintenanceUiState
 ) {
     val tabs = listOf("Mantenimiento", "Estacionamiento")
     val icons = listOf(Icons.Filled.Build, Icons.Filled.Place)
@@ -241,7 +264,7 @@ fun NavigationTab(
             when (selectedTab) {
                 0 -> VehicleMaintenance(
                     vehicle = vehicle,
-                    uiState = uiState.vehicleMaintenanceState
+                    uiState = uiStateMaintenance
                 )
                 1 -> Text("Contenido de Estacionamiento")
             }

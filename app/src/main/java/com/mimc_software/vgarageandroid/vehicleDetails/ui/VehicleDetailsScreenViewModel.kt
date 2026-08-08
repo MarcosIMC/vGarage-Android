@@ -49,6 +49,8 @@ class VehicleDetailsScreenViewModel @Inject constructor(
 ): ViewModel() {
     private val _uiState = MutableStateFlow<VehicleDetailsUiState>(VehicleDetailsUiState.Idle)
     val uiState: StateFlow<VehicleDetailsUiState> = _uiState
+    private val _uiStateMaintenance = MutableStateFlow<VehicleMaintenanceUiState>(VehicleMaintenanceUiState.Idle)
+    val uiStateMaintenance: StateFlow<VehicleMaintenanceUiState> = _uiStateMaintenance
 
     fun onGetVehicleDetails(vehicleId: String) {
         viewModelScope.launch {
@@ -81,52 +83,19 @@ class VehicleDetailsScreenViewModel @Inject constructor(
 
     fun onGetVehicleMaintenances(vehicleId: String) {
         viewModelScope.launch {
-            _uiState.value = when (val currentState = uiState.value) {
-                is VehicleDetailsUiState.Loaded -> currentState.copy(
-                    vehicleMaintenanceState = VehicleMaintenanceUiState.Loading
-                )
-                else -> currentState
-            }
-
             when (val result = getMaintenancesUseCase(vehicleId)) {
                 is GetMaintenancesResult.Success -> {
-                    _uiState.value = when (val currentState = uiState.value) {
-                        is VehicleDetailsUiState.Loaded -> currentState.copy(
-                            vehicleMaintenanceState = VehicleMaintenanceUiState.Loaded(
-                                maintenances = result.maintenances.map { it.toUiModel() }
-                            )
-                        )
-                        else -> currentState
+                    _uiStateMaintenance.value = if (result.maintenances.isNullOrEmpty()) {
+                        VehicleMaintenanceUiState.Empty
+                    } else {
+                        println("Mantenimientos: ${result.maintenances}")
+                        VehicleMaintenanceUiState.Loaded(result.maintenances.map { it.toUiModel() })
                     }
                 }
-                is GetMaintenancesResult.Empty -> {
-                    _uiState.value = when (val currentState = uiState.value) {
-                        is VehicleDetailsUiState.Loaded -> currentState.copy(
-                            vehicleMaintenanceState = VehicleMaintenanceUiState.Empty
-                        )
-                        else -> currentState
-                    }
-                }
-                is GetMaintenancesResult.Error -> {
-                    _uiState.value = when (val currentState = uiState.value) {
-                        is VehicleDetailsUiState.Loaded -> currentState.copy(
-                            vehicleMaintenanceState = VehicleMaintenanceUiState.Empty
-                        )
-                        else -> currentState
-                    }
-                }
-            }
-            // Aquí iría la lógica para obtener las mantenimientos del vehículo
-            // Por ejemplo, podrías llamar a un caso de uso similar a getVehicleByIdUseCase
 
-            // Después de obtener las mantenimientos, actualizar el estado:
-            _uiState.value = when (val currentState = uiState.value) {
-                is VehicleDetailsUiState.Loaded -> currentState.copy(
-                    vehicleMaintenanceState = VehicleMaintenanceUiState.Loaded(
-                        maintenances = listOf() // Reemplaza con la lista real de mantenimientos
-                    )
-                )
-                else -> currentState
+                is GetMaintenancesResult.Error -> {
+                    _uiStateMaintenance.value = VehicleMaintenanceUiState.Empty
+                }
             }
         }
     }

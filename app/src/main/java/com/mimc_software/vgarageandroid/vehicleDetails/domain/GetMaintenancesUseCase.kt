@@ -9,11 +9,7 @@ class GetMaintenancesUseCase @Inject constructor(
     suspend operator fun invoke(vehicleId: String): GetMaintenancesResult {
         return try {
             val maintenances = maintenanceRepository.getMaintenancesBy(vehicleId)
-            if (maintenances != null && maintenances.isNotEmpty()) {
-                GetMaintenancesResult.Success(maintenances)
-            } else {
-                GetMaintenancesResult.Empty
-            }
+            GetMaintenancesResult.Success(maintenances)
         } catch (e: Exception) {
             GetMaintenancesResult.Error(e)
         }
