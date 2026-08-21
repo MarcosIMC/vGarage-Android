@@ -40,10 +40,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
-import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
+import java.time.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -196,7 +196,7 @@ fun AddMaintenanceForm(
                 uid = Uuid.random().toString(),
                 title = state.maintenanceTitle,
                 kindMaintenance = selectedMaintenance.name,
-                date = state.maintenanceDate?.toString() ?: "",
+                date = state.maintenanceDate ?: LocalDate.now(),
                 price = state.maintenancePrice?.toDouble() ?: 0.0,
                 description = state.maintenanceNotes,
                 vehicleId = vehicleId

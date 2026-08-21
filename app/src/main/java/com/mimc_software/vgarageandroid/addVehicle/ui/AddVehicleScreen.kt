@@ -69,7 +69,6 @@ import com.mimc_software.vgarageandroid.R
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.CustomOutlinedTextField
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.DatePickerFieldToModal
 import androidx.core.net.toUri
-import androidx.navigation.compose.rememberNavController
 import com.mimc_software.vgarageandroid.Navigation
 import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import com.mimc_software.vgarageandroid.ui.theme.customComponents.galleryLauncher
@@ -374,8 +373,8 @@ fun AddVehicleForm(
                 uid = Uuid.random().toString(),
                 brand = state.vehicleName,
                 model = state.vehicleBrand,
-                year = state.vehicleYear.toString(),
-                revision = state.vehicleRevision?.toString() ?: "",
+                year = state.vehicleYear,
+                revision = state.vehicleRevision,
                 image = state.vehicleImage ?: "",
                 others = state.vehicleOthers,
                 displayName = "${state.vehicleName} ${state.vehicleBrand}",

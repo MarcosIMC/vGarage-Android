@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 sealed class AddVehicleUiState {
@@ -28,8 +29,8 @@ sealed class AddVehicleUiState {
 data class AddVehicleDataUiState(
     val vehicleName: String = "",
     val vehicleBrand: String = "",
-    val vehicleYear: Long? = null,
-    val vehicleRevision: Long? = null,
+    val vehicleYear: LocalDate? = null,
+    val vehicleRevision: LocalDate? = null,
     val vehicleImage: String? = null,
     val vehicleOthers: String = "",
     val garageId: String = "",
@@ -74,11 +75,11 @@ class AddVehicleViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(vehicleBrand = newValue)
     }
 
-    fun _onVehicleYearChange(newValue: Long?) {
+    fun _onVehicleYearChange(newValue: LocalDate?) {
         _uiState.value = _uiState.value.copy(vehicleYear = newValue)
     }
 
-    fun _onVehicleRevisionChange(newValue: Long?) {
+    fun _onVehicleRevisionChange(newValue: LocalDate?) {
         _uiState.value = _uiState.value.copy(vehicleRevision = newValue)
     }
 

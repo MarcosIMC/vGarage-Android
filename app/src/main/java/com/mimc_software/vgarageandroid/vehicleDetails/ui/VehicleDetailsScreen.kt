@@ -40,6 +40,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -70,7 +71,7 @@ fun VehicleDetailsScreen(
 ) {
     val uiState by vehicleDetailsScreenViewModel.uiState.collectAsState()
     val uiStateMaintenance by vehicleDetailsScreenViewModel.uiStateMaintenance.collectAsState()
-    var selectedTab by rememberSaveable { mutableStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(vehicleId) {
@@ -348,7 +349,7 @@ fun MaintenanceItem(maintenance: MaintenanceModel) {
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(maintenance.title)
-            Text(maintenance.date)
+            Text(maintenance.date.toString())
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.getSelectedDate
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,20 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun DatePickerFieldToModal(
     modifier: Modifier = Modifier.Companion,
-    value: Long?,
-    onValueChange: (Long?) -> Unit,
+    value: LocalDate?,
+    onValueChange: (LocalDate?) -> Unit,
     label: String
 ) {
     var showModal by remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        value = value?.let { convertMillisToDate(it) } ?: "",
+        value = value?.let { convertMillisToDate(it.toEpochDay()) } ?: "",
         onValueChange = {},
         label = { Text(label) },
         placeholder = { Text("MM/DD/YYYY") },
@@ -67,7 +69,7 @@ fun DatePickerFieldToModal(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
+    onDateSelected: (LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
@@ -76,7 +78,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                onDateSelected(datePickerState.getSelectedDate())
                 onDismiss()
             }) {
                 Text("OK")

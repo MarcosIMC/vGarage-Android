@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 sealed class AddMaintenanceUiState {
@@ -21,8 +22,8 @@ sealed class AddMaintenanceUiState {
 data class AddMaintenanceDataUiState(
     val maintenanceTitle: String = "",
     val maintenanceType: String = "",
-    val maintenanceDate: Long? = 0,
-    val maintenancePrice: Long? = 0,
+    val maintenanceDate: LocalDate? = null,
+    val maintenancePrice: Long? = null,
     val maintenanceNotes: String = "",
     val vehicleId: String = "",
 )
@@ -44,7 +45,7 @@ class AddMaintenanceViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(maintenanceTitle = newValue)
     }
 
-    fun onMaintenanceDateChange(newValue: Long?) {
+    fun onMaintenanceDateChange(newValue: LocalDate?) {
         _uiState.value = _uiState.value.copy(maintenanceDate = newValue)
     }
 

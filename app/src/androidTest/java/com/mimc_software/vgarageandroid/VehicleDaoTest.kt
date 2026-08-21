@@ -3,8 +3,6 @@ package com.mimc_software.vgarageandroid
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.mimc_software.vgarageandroid.addGarage.data.GarageDao
-import com.mimc_software.vgarageandroid.addGarage.data.GarageRepository
-import com.mimc_software.vgarageandroid.addGarage.domain.AddGarageUseCase
 import com.mimc_software.vgarageandroid.database.AppDatabase
 import com.mimc_software.vgarageandroid.addVehicle.data.VehicleDao
 import com.mimc_software.vgarageandroid.addVehicle.data.VehicleRepository
@@ -14,6 +12,7 @@ import com.mimc_software.vgarageandroid.addVehicle.ui.model.VehicleModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -46,8 +45,8 @@ class VehicleDaoTest {
                 uid = Uuid.Companion.random().toString(),
                 brand = "Toyota",
                 model = "Corolla",
-                year = "2020-01-01",
-                revision = "2021-01-01",
+                year = LocalDate.now(),
+                revision = LocalDate.now(),
                 image = "content://images/vehicle_1",
                 others = "Some other details",
                 displayName = "Toyota Corolla"
