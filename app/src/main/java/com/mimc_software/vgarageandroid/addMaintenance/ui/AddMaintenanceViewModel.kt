@@ -6,8 +6,10 @@ import com.mimc_software.vgarageandroid.addMaintenance.domain.AddMaintenanceResu
 import com.mimc_software.vgarageandroid.addMaintenance.domain.AddMaintenanceUseCase
 import com.mimc_software.vgarageandroid.vehicleDetails.ui.model.MaintenanceModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -28,6 +30,11 @@ data class AddMaintenanceDataUiState(
     val vehicleId: String = "",
 )
 
+sealed class AddMaintenanceUiEvent {
+    data class ShowSnackbar(val message: String): AddMaintenanceUiEvent()
+    object NavigationToMain: AddMaintenanceUiEvent()
+}
+
 @HiltViewModel
 class AddMaintenanceViewModel @Inject constructor(
     private val addMaintenanceUseCase: AddMaintenanceUseCase
@@ -36,6 +43,9 @@ class AddMaintenanceViewModel @Inject constructor(
     val uiStateFlow: StateFlow<AddMaintenanceUiState> = _uiStateFlow
     private val _uiState = MutableStateFlow(AddMaintenanceDataUiState())
     val uiState: StateFlow<AddMaintenanceDataUiState> = _uiState
+
+    private val _uiEvent = Channel<AddMaintenanceUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     val maintenanceTitleHasError: Boolean
         get() = uiState.value.maintenanceTitle.isEmpty() || "[0-9]".toRegex()
@@ -68,7 +78,9 @@ class AddMaintenanceViewModel @Inject constructor(
             _uiStateFlow.value = AddMaintenanceUiState.Loading
             when (val result = addMaintenanceUseCase(newMaintenance)) {
                 is AddMaintenanceResult.Success -> {
-                    _uiStateFlow.value = AddMaintenanceUiState.Success
+                    _uiState.value = AddMaintenanceDataUiState()
+                    _uiStateFlow.value = AddMaintenanceUiState.Idle
+                    _uiEvent.send(AddMaintenanceUiEvent.NavigationToMain)
                 }
 
                 is AddMaintenanceResult.Duplicate -> {

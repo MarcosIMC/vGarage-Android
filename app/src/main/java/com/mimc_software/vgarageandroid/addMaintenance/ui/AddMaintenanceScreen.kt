@@ -55,11 +55,15 @@ fun AddMaintenanceScreen(
     vehicleId: String
 ) {
     val state by addMaintenanceViewModel.uiState.collectAsState()
-    val operationState by addMaintenanceViewModel.uiStateFlow.collectAsState()
+    val uiEvent by addMaintenanceViewModel.uiEvent.collectAsState(initial = null)
 
-    LaunchedEffect(operationState) {
-        if (operationState is AddMaintenanceUiState.Success) {
-            navigationController.popBackStack()
+    LaunchedEffect(uiEvent) {
+        when(uiEvent) {
+            is AddMaintenanceUiEvent.NavigationToMain -> {
+                Log.d("AddMaintenanceScreen", "NavigationToMain event received, navigating back to main screen.")
+                navigationController.popBackStack()
+            }
+            else -> Unit
         }
     }
 
