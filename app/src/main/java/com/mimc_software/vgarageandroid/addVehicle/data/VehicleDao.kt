@@ -13,4 +13,8 @@ interface VehicleDao {
 
     @Insert
     suspend fun addVehicle(vehicle: VehicleEntity): Long
+
+    @Transaction
+    @Query("SELECT * FROM VehicleEntity WHERE uid = :vehicleId")
+    suspend fun getVehicleBy(vehicleId: String): VehicleEntity?
 }

@@ -21,11 +21,15 @@ import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreen
 import com.mimc_software.vgarageandroid.addGarage.ui.AddGarageScreenViewModel
+import com.mimc_software.vgarageandroid.addMaintenance.ui.AddMaintenanceScreen
+import com.mimc_software.vgarageandroid.addMaintenance.ui.AddMaintenanceViewModel
 import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicle
 import com.mimc_software.vgarageandroid.addVehicle.ui.AddVehicleViewModel
 import com.mimc_software.vgarageandroid.landing.ui.LandingScreen
 import com.mimc_software.vgarageandroid.main.ui.MainScreen
 import com.mimc_software.vgarageandroid.main.ui.MainScreenViewModel
+import com.mimc_software.vgarageandroid.vehicleDetails.ui.VehicleDetailsScreen
+import com.mimc_software.vgarageandroid.vehicleDetails.ui.VehicleDetailsScreenViewModel
 import com.mimc_software.vgarageandroid.ui.theme.VGarageAndroidTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +40,8 @@ class MainActivity : ComponentActivity() {
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
     private val mainScreenViewModel: MainScreenViewModel by viewModels()
     private val addVehicleViewModel: AddVehicleViewModel by viewModels()
+    private val vehicleDetailsScreenViewModel: VehicleDetailsScreenViewModel by viewModels()
+    private val addMaintenanceViewModel: AddMaintenanceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +100,32 @@ class MainActivity : ComponentActivity() {
                                     navigationController,
                                     addVehicleViewModel,
                                     garageId
+                                )
+                            }
+                            composable(
+                                Navigation.VehicleDetails.route,
+                                arguments = listOf(navArgument("vehicleId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
+                                VehicleDetailsScreen(
+                                    navigationController,
+                                    vehicleDetailsScreenViewModel,
+                                    vehicleId
+                                )
+                            }
+                            composable(
+                                Navigation.AddMaintenance.route,
+                                arguments = listOf(navArgument("vehicleId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                val vehicleId =
+                                    backStackEntry.arguments?.getString("vehicleId") ?: ""
+                                AddMaintenanceScreen(
+                                    Modifier.padding(
+                                        innerPadding
+                                    ),
+                                    navigationController,
+                                    addMaintenanceViewModel = addMaintenanceViewModel,
+                                    vehicleId
                                 )
                             }
                         }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mimc_software.vgarageandroid.addGarage.data.GarageDao
 import com.mimc_software.vgarageandroid.addVehicle.data.VehicleDao
+import com.mimc_software.vgarageandroid.vehicleDetails.data.MaintenanceDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +23,11 @@ class DatabaseModule {
     @Provides
     fun provideVehicleDao(appDatabase: AppDatabase): VehicleDao {
         return appDatabase.vehicleDao()
+    }
+
+    @Provides
+    fun provideMaintenanceDao(appDatabase: AppDatabase): MaintenanceDao {
+        return appDatabase.maintenanceDao()
     }
 
     @Provides

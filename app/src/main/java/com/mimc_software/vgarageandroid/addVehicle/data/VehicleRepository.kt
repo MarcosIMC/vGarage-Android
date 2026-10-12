@@ -20,4 +20,15 @@ class VehicleRepository @Inject constructor(private val vehicleDao: VehicleDao) 
         Log.d("VehicleRepository", "Found ${vehicles?.size ?: 0} vehicles")
         return vehicles
     }
+
+    suspend fun getVehicleBy(vehicleId: String): VehicleEntity? {
+        Log.d("VehicleRepository", "Getting vehicle by ID: $vehicleId")
+        val vehicle = vehicleDao.getVehicleBy(vehicleId)
+        if (vehicle != null) {
+            Log.d("VehicleRepository", "Vehicle found: uid=${vehicle.uid}, brand=${vehicle.brand}, garageId=${vehicle.garageId}")
+        } else {
+            Log.d("VehicleRepository", "No vehicle found with ID: $vehicleId")
+        }
+        return vehicle
+    }
 }
