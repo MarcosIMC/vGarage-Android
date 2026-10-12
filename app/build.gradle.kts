@@ -1,14 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
     id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.mimc_software.vgarageandroid"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.mimc_software.vgarageandroid"
@@ -32,9 +31,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -61,6 +57,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.material3)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.foundation)
 
     //implementation(libs.androidx.navigation.testing.android)
 
@@ -73,32 +70,29 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation("androidx.navigation:navigation-testing:2.9.0")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.56.2")
-    kaptAndroidTest("com.google.dagger:hilt-compiler:2.56.2")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.60.1")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.60.1")
     androidTestImplementation("androidx.test:core-ktx:1.6.1")
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.9.0")
 
     //Room
-    implementation("androidx.room:room-runtime:2.7.1")
-    testImplementation("androidx.room:room-testing:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
-    kapt("androidx.room:room-compiler:2.7.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    testImplementation("androidx.room:room-testing:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
 
     //LiveData
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.compose.runtime:runtime-livedata:1.8.0")
 
     //Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.56.2")
-    kapt ("com.google.dagger:hilt-compiler:2.56.2")
-    testImplementation ("com.google.dagger:hilt-android-testing:2.56.2")
-    kaptTest ("com.google.dagger:hilt-compiler:2.56.2")
+    implementation("com.google.dagger:hilt-android:2.60.1")
+    ksp ("com.google.dagger:hilt-compiler:2.60.1")
+    testImplementation ("com.google.dagger:hilt-android-testing:2.60.1")
+    kspTest ("com.google.dagger:hilt-compiler:2.60.1")
     testImplementation(kotlin("test"))
     testImplementation("androidx.compose.ui:ui-test-junit4:1.8.2")
 
 }
 
-kapt {
-    correctErrorTypes = true
-}
