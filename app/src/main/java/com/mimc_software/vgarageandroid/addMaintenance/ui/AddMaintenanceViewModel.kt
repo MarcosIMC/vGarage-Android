@@ -41,6 +41,12 @@ class AddMaintenanceViewModel @Inject constructor(
         get() = uiState.value.maintenanceTitle.isEmpty() || "[0-9]".toRegex()
             .containsMatchIn(uiState.value.maintenanceTitle)
 
+    val maintenancePriceHasError: Boolean
+        get() = uiState.value.maintenancePrice == null || uiState.value.maintenancePrice!!.toDouble() < 0
+
+    val maintenanceDateHasError: Boolean
+        get() = uiState.value.maintenanceDate == null
+
     fun onMaintenanceTitleChange(newValue: String) {
         _uiState.value = _uiState.value.copy(maintenanceTitle = newValue)
     }
@@ -77,6 +83,6 @@ class AddMaintenanceViewModel @Inject constructor(
     }
 
     fun validateForm(): Boolean {
-        return !maintenanceTitleHasError
+        return !maintenanceTitleHasError && !maintenancePriceHasError && !maintenanceDateHasError
     }
 }

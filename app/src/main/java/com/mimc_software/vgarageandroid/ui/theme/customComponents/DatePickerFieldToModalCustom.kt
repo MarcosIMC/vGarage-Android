@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import java.text.SimpleDateFormat
@@ -32,7 +33,9 @@ fun DatePickerFieldToModal(
     modifier: Modifier = Modifier.Companion,
     value: LocalDate?,
     onValueChange: (LocalDate?) -> Unit,
-    label: String
+    label: String,
+    hasError: Boolean?,
+
 ) {
     var showModal by remember { mutableStateOf(false) }
 
@@ -56,6 +59,13 @@ fun DatePickerFieldToModal(
             },
         readOnly = true,
         colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
+        isError = hasError ?: false,
+        supportingText = {
+            if (hasError == true) {
+                Text("Debe introducir una fecha correcta.", color = Color.Red)
+            }
+
+        }
     )
 
     if (showModal) {

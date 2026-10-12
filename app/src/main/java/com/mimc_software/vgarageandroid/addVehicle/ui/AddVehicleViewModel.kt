@@ -67,6 +67,12 @@ class AddVehicleViewModel @Inject constructor(
     val vehicleModelHasError: Boolean
         get() = _uiState.value.vehicleBrand.isEmpty()
 
+    val vehicleYearHasError: Boolean
+        get() = _uiState.value.vehicleYear == null
+
+    val vehicleRevisionHasError: Boolean
+        get() = _uiState.value.vehicleRevision == null
+
     fun _onVehicleNameChange(newValue: String) {
         _uiState.value = _uiState.value.copy(vehicleName = newValue)
     }

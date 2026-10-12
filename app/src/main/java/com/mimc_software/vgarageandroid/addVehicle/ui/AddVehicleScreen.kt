@@ -345,14 +345,16 @@ fun AddVehicleForm(
             modifier = Modifier.weight(1f),
             value = state.vehicleYear,
             onValueChange = { addVehicleViewModel._onVehicleYearChange(it) },
-            label = "Año"
+            label = "Año",
+            hasError = addVehicleViewModel.vehicleYearHasError
         )
 
         DatePickerFieldToModal(
             modifier = Modifier.weight(1f),
             value = state.vehicleRevision,
             onValueChange = { addVehicleViewModel._onVehicleRevisionChange(it) },
-            label = "ITV"
+            label = "ITV",
+            hasError = addVehicleViewModel.vehicleRevisionHasError
         )
     }
 

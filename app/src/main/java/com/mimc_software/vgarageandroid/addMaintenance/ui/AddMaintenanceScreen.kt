@@ -123,6 +123,8 @@ fun AddMaintenanceForm(
     vehicleId: String
 ) {
     var maintenanceTitleFieldIsTouched by remember { mutableStateOf(false) }
+    var maintenanceDateFieldIsTouched by remember { mutableStateOf(false) }
+    var maintenancePriceFieldIsTouched by remember { mutableStateOf(false) }
     var selectedMaintenance by rememberSaveable { mutableStateOf(MaintenanceType.OTHERS) }
 
     OutlinedTextField(
@@ -160,16 +162,27 @@ fun AddMaintenanceForm(
         modifier = modifier
     )
     DatePickerFieldToModal(
-        modifier = modifier,
+        modifier = modifier
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    maintenanceDateFieldIsTouched = true
+                }
+            },
         value = state.maintenanceDate,
         onValueChange = { addMaintenanceViewModel.onMaintenanceDateChange(it) },
-        label = "Fecha"
+        label = "Fecha",
+        hasError = addMaintenanceViewModel.maintenanceTitleHasError && maintenanceDateFieldIsTouched
     )
     OutlinedTextField(
         value = state.maintenancePrice?.toString() ?: "",
         onValueChange = { addMaintenanceViewModel.onMaintenancePriceChange(it.toLongOrNull()) },
         label = { Text("Precio") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+        .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    maintenancePriceFieldIsTouched = true
+                }
+            },
         colors = CustomOutlinedTextField.outlinedTextFieldColorsForm(),
         trailingIcon = {
             Icon(
@@ -177,6 +190,12 @@ fun AddMaintenanceForm(
                 contentDescription = "Icono de precio",
                 tint = colorResource(R.color.appColor)
             )
+        },
+        isError = addMaintenanceViewModel.maintenancePriceHasError && maintenancePriceFieldIsTouched,
+        supportingText = {
+            if (addMaintenanceViewModel.maintenancePriceHasError && maintenancePriceFieldIsTouched) {
+                Text("El valor del precio debe ser válido.", color = Color.Red)
+            }
         }
     )
     OutlinedTextField(
