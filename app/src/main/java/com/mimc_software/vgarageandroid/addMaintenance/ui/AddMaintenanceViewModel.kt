@@ -25,7 +25,7 @@ data class AddMaintenanceDataUiState(
     val maintenanceTitle: String = "",
     val maintenanceType: String = "",
     val maintenanceDate: LocalDate? = null,
-    val maintenancePrice: Long? = null,
+    val maintenancePrice: Double? = null,
     val maintenanceNotes: String = "",
     val vehicleId: String = "",
 )
@@ -65,7 +65,7 @@ class AddMaintenanceViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(maintenanceDate = newValue)
     }
 
-    fun onMaintenancePriceChange(newValue: Long?) {
+    fun onMaintenancePriceChange(newValue: Double?) {
         _uiState.value = _uiState.value.copy(maintenancePrice = newValue)
     }
 

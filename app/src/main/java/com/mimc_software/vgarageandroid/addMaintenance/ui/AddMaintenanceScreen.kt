@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonColors
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimc_software.vgarageandroid.R
@@ -179,7 +181,7 @@ fun AddMaintenanceForm(
     )
     OutlinedTextField(
         value = state.maintenancePrice?.toString() ?: "",
-        onValueChange = { addMaintenanceViewModel.onMaintenancePriceChange(it.toLongOrNull()) },
+        onValueChange = { addMaintenanceViewModel.onMaintenancePriceChange(it.toDoubleOrNull()) },
         label = { Text("Precio") },
         modifier = Modifier.fillMaxWidth()
         .onFocusChanged { focusState ->
@@ -200,7 +202,10 @@ fun AddMaintenanceForm(
             if (addMaintenanceViewModel.maintenancePriceHasError && maintenancePriceFieldIsTouched) {
                 Text("El valor del precio debe ser válido.", color = Color.Red)
             }
-        }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        )
     )
     OutlinedTextField(
         value = state.maintenanceNotes,
